@@ -151,9 +151,23 @@ class _doc_profileState extends State<doc_profile> {
                           ),
                         ),
                         Padding(
-                          padding:  EdgeInsets.only(top: 28.0,left: 15),
+                          padding:  EdgeInsets.only(top: 8.0,left: 15),
                           child: Text(doctor.specialty ?? "no report"),
                         ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 28.0, left: 15),
+                          child: Text(
+                            "Registration",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20),
+                          ),
+                        ),
+                        Padding(
+                          padding:  EdgeInsets.only(top: 8.0,left: 15),
+                          child: Text("${doctor.regNo}" ?? "no report"),
+                        ),
+
                         Container(
                           height: 200,
                         )

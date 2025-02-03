@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../pages/home.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sim_card_info/sim_card_info.dart';
+import 'package:sim_card_info/sim_info.dart';
+
 
 class PhoneEntryPage extends StatefulWidget {
   @override
@@ -17,10 +21,14 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
   final _phoneController = TextEditingController();
   final _form =GlobalKey<FormState>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  String _selectedCountryCode = '+91'; // Default country code
+
+  String? phoneNumber;
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
+    fetchSimInfo();
     // Lock orientation to portrait mode for this page
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
@@ -34,6 +42,43 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
       DeviceOrientation.landscapeRight,
     ]);
     super.dispose();
+  }
+  Future<void> fetchSimInfo() async {
+    // Request phone permission
+    if (await Permission.phone.request().isGranted) {
+      try {
+        // Retrieve SIM information
+        final simCardInfoPlugin = SimCardInfo();
+        List<SimInfo>? simInfo = await simCardInfoPlugin.getSimInfo();
+
+        // Check if SIM information is available
+        if (simInfo != null && simInfo.isNotEmpty) {
+          setState(() {
+            phoneNumber = simInfo[0].number; // Get the phone number of the first SIM card
+            _phoneController.text=phoneNumber!;
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            phoneNumber = 'No SIM information available.';
+            _phoneController.text=phoneNumber!;
+            isLoading = false;
+          });
+        }
+      } catch (e) {
+        setState(() {
+          phoneNumber = 'Failed to get SIM information: $e';
+          _phoneController.text=phoneNumber!;
+          isLoading = false;
+        });
+      }
+    } else {
+      setState(() {
+        phoneNumber = 'Phone permission denied.';
+        _phoneController.text=phoneNumber!;
+        isLoading = false;
+      });
+    }
   }
   Future<User?> signInWithGoogle() async {
     try {
@@ -170,7 +215,7 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                     onPressed: () async {
                       if(_form.currentState!.validate()){
                       String phoneNumber =
-                          '$_selectedCountryCode${_phoneController.text.trim()}';
+                          '${_phoneController.text.trim()}';
                       await _auth.verifyPhoneNumber(
                         phoneNumber: phoneNumber,
                         verificationCompleted:
