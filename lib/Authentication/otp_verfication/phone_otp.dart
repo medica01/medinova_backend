@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:health_hub/main.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +12,51 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sim_card_info/sim_card_info.dart';
 import 'package:sim_card_info/sim_info.dart';
+import 'package:http/http.dart' as http;
+
+class user_profile {
+  int? id;
+  String? userName;
+  String? gender;
+  int? age;
+  int? phoneNumber;
+  String? email;
+  String? location;
+  String? userPhoto;
+
+  user_profile({this.id,
+    this.userName,
+    this.gender,
+    this.age,
+    this.phoneNumber,
+    this.email,
+    this.location,
+    this.userPhoto});
+
+  user_profile.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    userName = json['user_name'];
+    gender = json['gender'];
+    age = json['age'];
+    phoneNumber = json['phone_number'];
+    email = json['email'];
+    location = json['location'];
+    userPhoto = json['user_photo'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['user_name'] = this.userName;
+    data['gender'] = this.gender;
+    data['age'] = this.age;
+    data['phone_number'] = this.phoneNumber;
+    data['email'] = this.email;
+    data['location'] = this.location;
+    data['user_photo'] = this.userPhoto;
+    return data;
+  }
+}
 
 
 class PhoneEntryPage extends StatefulWidget {
@@ -18,12 +65,14 @@ class PhoneEntryPage extends StatefulWidget {
 }
 
 class _PhoneEntryPageState extends State<PhoneEntryPage> {
-  final _phoneController = TextEditingController();
-  final _form =GlobalKey<FormState>();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  final TextEditingController _phoneController = TextEditingController();
+  final _form = GlobalKey<FormState>();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   String? phoneNumber;
   bool isLoading = true;
+
+
 
   @override
   void initState() {
@@ -43,9 +92,12 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
     ]);
     super.dispose();
   }
+
   Future<void> fetchSimInfo() async {
     // Request phone permission
-    if (await Permission.phone.request().isGranted) {
+    if (await Permission.phone
+        .request()
+        .isGranted) {
       try {
         // Retrieve SIM information
         final simCardInfoPlugin = SimCardInfo();
@@ -54,32 +106,34 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
         // Check if SIM information is available
         if (simInfo != null && simInfo.isNotEmpty) {
           setState(() {
-            phoneNumber = simInfo[0].number; // Get the phone number of the first SIM card
-            _phoneController.text=phoneNumber!;
+            phoneNumber =
+                simInfo[0].number; // Get the phone number of the first SIM card
+            _phoneController.text = phoneNumber!;
             isLoading = false;
           });
         } else {
           setState(() {
             phoneNumber = 'No SIM information available.';
-            _phoneController.text=phoneNumber!;
+            _phoneController.text = phoneNumber!;
             isLoading = false;
           });
         }
       } catch (e) {
         setState(() {
           phoneNumber = 'Failed to get SIM information: $e';
-          _phoneController.text=phoneNumber!;
+          _phoneController.text = phoneNumber!;
           isLoading = false;
         });
       }
     } else {
       setState(() {
         phoneNumber = 'Phone permission denied.';
-        _phoneController.text=phoneNumber!;
+        _phoneController.text = phoneNumber!;
         isLoading = false;
       });
     }
   }
+
   Future<User?> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -103,6 +157,7 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
       return null;
     }
   }
+
   Future<void> saveUserData(User? user) async {
     if (user != null) {
       SharedPreferences pref = await SharedPreferences.getInstance();
@@ -129,15 +184,16 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
+    final screen = MediaQuery
+        .of(context)
+        .size;
     return Scaffold(
       backgroundColor: const Color(0xfff5f5f5),
       body: SingleChildScrollView(
         child: Container(
-          height: screen.height*1,
+          height: screen.height * 1,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Form(
@@ -174,8 +230,8 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                   Padding(
                     padding: EdgeInsets.only(left: 18.0, right: 18, top: 18),
                     child: TextFormField(
-                      validator: (value){
-                        if (value==null|| value.isEmpty){
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
                           return "no phone number";
                         }
                         return null;
@@ -213,34 +269,37 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(40))),
                     onPressed: () async {
-                      if(_form.currentState!.validate()){
-                      String phoneNumber =
-                          '${_phoneController.text.trim()}';
-                      await _auth.verifyPhoneNumber(
-                        phoneNumber: phoneNumber,
-                        verificationCompleted:
-                            (PhoneAuthCredential credential) async {
-                          // Auto-retrieve not applicable here
-                        },
-                        verificationFailed: (FirebaseAuthException e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Verification failed: ${e.message}'),
-                            ),
-                          );
-                        },
-                        codeSent: (String verificationId, int? resendToken) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => OtpPage(
-                                verificationId: verificationId,
+                      if (_form.currentState!.validate()) {
+                        String phoneNumber =
+                            '+91${_phoneController.text.trim()}';
+                        await _auth.verifyPhoneNumber(
+                          phoneNumber: phoneNumber,
+                          verificationCompleted:
+                              (PhoneAuthCredential credential) async {
+                            // Auto-retrieve not applicable here
+                          },
+                          verificationFailed: (FirebaseAuthException e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'Verification failed: ${e.message}'),
                               ),
-                            ),
-                          );
-                        },
-                        codeAutoRetrievalTimeout: (String verificationId) {},
-                      );}
+                            );
+                          },
+                          codeSent: (String verificationId, int? resendToken) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    OtpPage(
+                                      verificationId: verificationId, data: '$phoneNumber',
+                                    ),
+                              ),
+                            );
+                          },
+                          codeAutoRetrievalTimeout: (String verificationId) {},
+                        );
+                      }
                     },
                     child: SizedBox(
                         height: 50,
@@ -253,12 +312,13 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                   ),
 
                   Padding(
-                    padding:  EdgeInsets.only(top: 20.0),
+                    padding: EdgeInsets.only(top: 20.0),
                     child: GestureDetector(
-                      onTap: () async{
+                      onTap: () async {
                         User? user = await signInWithGoogle();
-                        if(user !=null){
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
+                        if (user != null) {
+                          Navigator.pushReplacement(context, MaterialPageRoute(
+                              builder: (context) => HomePage()));
                         }
                       },
                       child: Container(
@@ -266,15 +326,16 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                         width: 330,
                         clipBehavior: Clip.hardEdge,
                         decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(50)
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(50)
                         ),
                         child: Row(
                           // crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Icon(FontAwesomeIcons.google,color: Colors.white,),
-                            Text("Continue with Google",style: TextStyle(color: Colors.white),)
+                            Icon(FontAwesomeIcons.google, color: Colors.white,),
+                            Text("Continue with Google",
+                              style: TextStyle(color: Colors.white),)
                           ],
                         ),
                       ),
@@ -292,8 +353,10 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
 
 class OtpPage extends StatefulWidget {
   final String verificationId;
+  final String data;
 
-  OtpPage({required this.verificationId});
+  OtpPage({required this.verificationId,required this.data
+  });
 
   @override
   _OtpPageState createState() => _OtpPageState();
@@ -303,6 +366,30 @@ class _OtpPageState extends State<OtpPage> {
   final TextEditingController _otpController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+
+  Future<void> _user_profile() async {
+    String save_phone_number = widget.data;
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://$ip:8000/user_profile/user_create/'),
+        headers: {"Content-Type":"application/json"},
+        body: jsonEncode({
+          'phone_number':save_phone_number,
+        }),
+      );
+      if(response.statusCode == 201){
+        SharedPreferences perf =await SharedPreferences.getInstance();
+        await perf.setString('phone_number', save_phone_number);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("phone number add successfully")));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
+      }else {
+        print('add phone number failed:${response.body}');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("add phone number failed: ${response.body}")));
+      }
+    } catch (e) {}
+  }
   void _verifyOtp() async {
     String otp = _otpController.text.trim();
 
@@ -313,12 +400,13 @@ class _OtpPageState extends State<OtpPage> {
       );
 
       await _auth.signInWithCredential(credential);
+      await _user_profile();
 
       // Navigate to Home Page
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => HomePage()),
+      // );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Invalid OTP')),
@@ -361,7 +449,10 @@ class _OtpPageState extends State<OtpPage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _verifyOtp,
+              onPressed:  () async{
+                _verifyOtp;
+                await _user_profile();
+              },
               child: const Text('Verify OTP'),
             ),
           ],
@@ -370,3 +461,109 @@ class _OtpPageState extends State<OtpPage> {
     );
   }
 }
+//
+// import 'package:flutter/material.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:pin_code_fields/pin_code_fields.dart';
+//
+// class PhoneAuthPage extends StatefulWidget {
+//   @override
+//   _PhoneAuthPageState createState() => _PhoneAuthPageState();
+// }
+//
+// class _PhoneAuthPageState extends State<PhoneAuthPage> {
+//   final FirebaseAuth _auth = FirebaseAuth.instance;
+//   final TextEditingController phoneController = TextEditingController();
+//   final TextEditingController otpController = TextEditingController();
+//
+//   String? verificationId;
+//   bool otpSent = false;
+//
+//   Future<void> sendOTP() async {
+//     String phoneNumber = "+91${phoneController.text.trim()}"; // Change country code if needed
+//
+//     await _auth.verifyPhoneNumber(
+//       phoneNumber: phoneNumber,
+//       timeout: const Duration(seconds: 60),
+//       verificationCompleted: (PhoneAuthCredential credential) async {
+//         await _auth.signInWithCredential(credential);
+//         Fluttertoast.showToast(msg: "Auto Verification Success!");
+//         Navigator.pushReplacementNamed(context, '/home');
+//       },
+//       verificationFailed: (FirebaseAuthException e) {
+//         Fluttertoast.showToast(msg: "Verification Failed: ${e.message}");
+//       },
+//       codeSent: (String verId, int? resendToken) {
+//         setState(() {
+//           verificationId = verId;
+//           otpSent = true;
+//         });
+//         Fluttertoast.showToast(msg: "OTP Sent!");
+//       },
+//       codeAutoRetrievalTimeout: (String verId) {
+//         verificationId = verId;
+//       },
+//     );
+//   }
+//
+//   Future<void> verifyOTP() async {
+//     if (verificationId == null) {
+//       Fluttertoast.showToast(msg: "Invalid verification ID.");
+//       return;
+//     }
+//
+//     try {
+//       PhoneAuthCredential credential = PhoneAuthProvider.credential(
+//         verificationId: verificationId!,
+//         smsCode: otpController.text.trim(),
+//       );
+//
+//       await _auth.signInWithCredential(credential);
+//       Fluttertoast.showToast(msg: "OTP Verified Successfully!");
+//       Navigator.pushReplacementNamed(context, '/home');
+//     } catch (e) {
+//       Fluttertoast.showToast(msg: "Invalid OTP, try again.");
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: Text("Phone OTP Login")),
+//       body: Padding(
+//         padding: const EdgeInsets.all(16.0),
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             if (!otpSent) ...[
+//               TextField(
+//                 controller: phoneController,
+//                 keyboardType: TextInputType.phone,
+//                 decoration: InputDecoration(labelText: "Enter Phone Number"),
+//               ),
+//               SizedBox(height: 20),
+//               ElevatedButton(
+//                 onPressed: sendOTP,
+//                 child: Text("Send OTP"),
+//               ),
+//             ] else ...[
+//               PinCodeTextField(
+//                 length: 6,
+//                 controller: otpController,
+//                 appContext: context,
+//                 keyboardType: TextInputType.number,
+//                 onChanged: (value) {},
+//               ),
+//               SizedBox(height: 20),
+//               ElevatedButton(
+//                 onPressed: verifyOTP,
+//                 child: Text("Verify OTP"),
+//               ),
+//             ],
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
