@@ -14,28 +14,35 @@ import 'package:sim_card_info/sim_card_info.dart';
 import 'package:sim_card_info/sim_info.dart';
 import 'package:http/http.dart' as http;
 
-class user_profile {
+class update_profile {
   int? id;
-  String? userName;
+  String? createdAt;
+  String? firstName;
+  String? lastName;
   String? gender;
-  int? age;
+  String? age;
   int? phoneNumber;
   String? email;
   String? location;
   String? userPhoto;
 
-  user_profile({this.id,
-    this.userName,
-    this.gender,
-    this.age,
-    this.phoneNumber,
-    this.email,
-    this.location,
-    this.userPhoto});
+  update_profile(
+      {this.id,
+        this.createdAt,
+        this.firstName,
+        this.lastName,
+        this.gender,
+        this.age,
+        this.phoneNumber,
+        this.email,
+        this.location,
+        this.userPhoto});
 
-  user_profile.fromJson(Map<String, dynamic> json) {
+  update_profile.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    userName = json['user_name'];
+    createdAt = json['created_at'];
+    firstName = json['first_name'];
+    lastName = json['last_name'];
     gender = json['gender'];
     age = json['age'];
     phoneNumber = json['phone_number'];
@@ -47,7 +54,9 @@ class user_profile {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['user_name'] = this.userName;
+    data['created_at'] = this.createdAt;
+    data['first_name'] = this.firstName;
+    data['last_name'] = this.lastName;
     data['gender'] = this.gender;
     data['age'] = this.age;
     data['phone_number'] = this.phoneNumber;

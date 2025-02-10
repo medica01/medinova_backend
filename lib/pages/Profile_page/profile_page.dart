@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:health_hub/main.dart';
+import 'package:health_hub/pages/Profile_page/personal_details_2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../Authentication/otp_verfication/phone_otp.dart';
@@ -16,7 +18,7 @@ class update_profile {
   String? firstName;
   String? lastName;
   String? gender;
-  String? age;
+  int? age;
   int? phoneNumber;
   String? email;
   String? location;
@@ -72,6 +74,7 @@ class profile_page extends StatefulWidget {
 }
 
 class _profile_pageState extends State<profile_page> {
+
   Future<bool> signOutFromGoogle() async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -92,6 +95,7 @@ class _profile_pageState extends State<profile_page> {
       return false;
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -127,14 +131,67 @@ class profile extends StatefulWidget {
   State<profile> createState() => _profileState();
 }
 
+
 class _profileState extends State<profile> {
+
+  update_profile? userprofile;
+  bool isloading = true;
+  String? errormessage;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    user();
+  }
+
+  Future<void> user()async{
+    final url = Uri.parse("http://$ip:8000/user_profile/user_edit/3/");
+    try {
+      final response = await http.get(url);
+      if(response.statusCode == 200){
+        Map<String,dynamic> jsonResponse = jsonDecode(response.body);
+        setState(() {
+          userprofile = update_profile.fromJson(jsonResponse);
+          isloading=false;
+        });
+      }else{
+        setState(() {
+          errormessage = "failed to load user details";
+          isloading=false;
+        });
+      }
+    }catch(e){
+      errormessage = e.toString();
+      isloading=false;
+    }
+  }
+
+  Widget menu_item(String text, IconData icon, VoidCallback onTap) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18.0),
+      child: ListTile(
+        leading:  CircleAvatar(
+          backgroundColor: Color(0xffe5f4f1),
+          child: Icon(icon, color: Color(0xff1f8acc)),
+        ),
+        title: Text(
+          text,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        trailing:
+        const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+        onTap: onTap,
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return ListView(
       children: [
         Container(
           child: Padding(
-            padding: const EdgeInsets.only(left: 18.0, right: 18),
+            padding: const EdgeInsets.only(left: 18.0, right: 18,bottom: 10),
             child: OutlinedButton(
               onPressed: () {
                 showModalBottomSheet(
@@ -161,6 +218,60 @@ class _profileState extends State<profile> {
             ),
           ),
         ),
+        Divider(
+          color: Colors.grey,
+          thickness: 1,
+          indent: 5,
+          endIndent: 5,
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 20.0,right: 20,top: 10,bottom: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.red,
+              )
+            ],
+          ),
+        ),
+
+        isloading
+            ? Center(child: CircularProgressIndicator())
+            : userprofile != null
+            ? Center(
+              child: Text(
+                        "${userprofile!.firstName ?? ''} ${userprofile!.lastName ?? ''}",
+                        style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+                      ),
+            )
+            : Center(
+          child: Text(
+            errormessage ?? "No user data found",
+            style: TextStyle(fontSize: 18, color: Colors.red),
+          ),
+        ),
+
+        const SizedBox(height: 10),
+        // Menu Items with Navigation
+        menu_item('Personal details', CupertinoIcons.profile_circled, () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => personal_details()),
+          );
+        }),
+        menu_item('Settings', Icons.settings, () {
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //       builder: (context) => const ProfileDetailsPage()),
+          // );
+        }),
+        menu_item('About', CupertinoIcons.info, () {}),
+        menu_item('Help', Icons.help_outline, () {}),
+
       ],
     );
   }

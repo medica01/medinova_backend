@@ -85,3 +85,12 @@ Widget textfielld2(
   );
 }
 
+// appbar functions
+AppBar customAppBar(String title, {bool centertitle = false}) {
+  return AppBar(
+    title: Text(title, style: TextStyle(color: Color(0xff1f8acc))),
+    backgroundColor: Colors.white,
+    centerTitle: centertitle,
+  );
+}
+
