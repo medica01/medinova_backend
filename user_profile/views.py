@@ -51,5 +51,40 @@ class user_edit(APIView):
         user = get_object_or_404(user_profile,pk=pk)
         user.delete()
         return Response({'success':'deleted successfully'},status=status.HTTP_204_NO_CONTENT)
-        
-    
+
+
+# class CheckUserView(APIView):
+#     permission_classes =[AllowAny]
+
+#     def post(self, request):
+#         phone_number = request.data.get('phone_number')
+
+#         if not phone_number:
+#             return Response({'error': 'Phone number is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+#         # Check if the user exists
+#         user_exists = user_profile.objects.filter(phone_number=phone_number).exists()
+
+#         if user_exists:
+#             return Response({'message': 'User exists', 'status': 'old_user'}, status=status.HTTP_200_OK)
+#         else:
+#             return Response({'message': 'User does not exist', 'status': 'new_user'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class check_phoneno(APIView):
+    permission_classes =[AllowAny]
+
+    def post(self,request):
+        phone_number= request.data.get('phone_number')
+
+        if not phone_number:
+            return Response({'error': 'phone number must required'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        check_phone= user_profile.objects.filter(phone_number=phone_number).first()
+
+        if check_phone:
+            return Response({'message':'user phone is exist','status':'old_user'},status=status.HTTP_200_OK)
+        else:
+            return Response({'message':'no user found','status':'new_user'},status=status.HTTP_404_NOT_FOUND)
+
