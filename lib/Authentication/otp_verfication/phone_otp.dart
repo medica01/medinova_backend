@@ -28,15 +28,15 @@ class update_profile {
 
   update_profile(
       {this.id,
-        this.createdAt,
-        this.firstName,
-        this.lastName,
-        this.gender,
-        this.age,
-        this.phoneNumber,
-        this.email,
-        this.location,
-        this.userPhoto});
+      this.createdAt,
+      this.firstName,
+      this.lastName,
+      this.gender,
+      this.age,
+      this.phoneNumber,
+      this.email,
+      this.location,
+      this.userPhoto});
 
   update_profile.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -67,21 +67,17 @@ class update_profile {
   }
 }
 
-
 class PhoneEntryPage extends StatefulWidget {
   @override
   _PhoneEntryPageState createState() => _PhoneEntryPageState();
 }
 
 class _PhoneEntryPageState extends State<PhoneEntryPage> {
-
   final TextEditingController _phoneController = TextEditingController();
   final _form = GlobalKey<FormState>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? phoneNumber;
   bool isLoading = true;
-
-
 
   @override
   void initState() {
@@ -104,9 +100,7 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
 
   Future<void> fetchSimInfo() async {
     // Request phone permission
-    if (await Permission.phone
-        .request()
-        .isGranted) {
+    if (await Permission.phone.request().isGranted) {
       try {
         // Retrieve SIM information
         final simCardInfoPlugin = SimCardInfo();
@@ -147,7 +141,7 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       final GoogleSignInAuthentication? googleAuth =
-      await googleUser?.authentication;
+          await googleUser?.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
@@ -155,7 +149,7 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
       );
 
       final userCredential =
-      await FirebaseAuth.instance.signInWithCredential(credential);
+          await FirebaseAuth.instance.signInWithCredential(credential);
 
       // Save user data to Firestore
       await saveUserData(userCredential.user);
@@ -192,12 +186,9 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery
-        .of(context)
-        .size;
+    final screen = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: const Color(0xfff5f5f5),
       body: SingleChildScrollView(
@@ -250,11 +241,9 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                       maxLength: 10,
                       maxLengthEnforcement: MaxLengthEnforcement.enforced,
                       controller: _phoneController,
-
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       decoration: InputDecoration(
                         focusColor: Color(0xff46c8bb),
-
                         contentPadding: EdgeInsets.only(left: 90),
                         counterText: "",
                         hintText: 'Enter Phone Number',
@@ -264,9 +253,7 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                             borderSide: BorderSide.merge(
                               BorderSide(color: Color(0xff1f8acc)),
                               BorderSide.none,
-                            )
-
-                        ),
+                            )),
                       ),
                       keyboardType: TextInputType.phone,
                     ),
@@ -290,8 +277,8 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                           verificationFailed: (FirebaseAuthException e) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(
-                                    'Verification failed: ${e.message}'),
+                                content:
+                                    Text('Verification failed: ${e.message}'),
                               ),
                             );
                           },
@@ -299,10 +286,10 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    OtpPage(
-                                      verificationId: verificationId, data: '$phoneNumber',
-                                    ),
+                                builder: (context) => OtpPage(
+                                  verificationId: verificationId,
+                                  data: '$phoneNumber',
+                                ),
                               ),
                             );
                           },
@@ -319,15 +306,16 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                                     fontSize: 20, color: Color(0xff1f8acc)),
                                 'Continue'))),
                   ),
-
                   Padding(
                     padding: EdgeInsets.only(top: 20.0),
                     child: GestureDetector(
                       onTap: () async {
                         User? user = await signInWithGoogle();
                         if (user != null) {
-                          Navigator.pushReplacement(context, MaterialPageRoute(
-                              builder: (context) => HomePage()));
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomePage()));
                         }
                       },
                       child: Container(
@@ -336,15 +324,19 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                         clipBehavior: Clip.hardEdge,
                         decoration: BoxDecoration(
                             color: Colors.blue,
-                            borderRadius: BorderRadius.circular(50)
-                        ),
+                            borderRadius: BorderRadius.circular(50)),
                         child: Row(
                           // crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Icon(FontAwesomeIcons.google, color: Colors.white,),
-                            Text("Continue with Google",
-                              style: TextStyle(color: Colors.white),)
+                            Icon(
+                              FontAwesomeIcons.google,
+                              color: Colors.white,
+                            ),
+                            Text(
+                              "Continue with Google",
+                              style: TextStyle(color: Colors.white),
+                            )
                           ],
                         ),
                       ),
@@ -364,8 +356,7 @@ class OtpPage extends StatefulWidget {
   final String verificationId;
   final String data;
 
-  OtpPage({required this.verificationId,required this.data
-  });
+  OtpPage({required this.verificationId, required this.data});
 
   @override
   _OtpPageState createState() => _OtpPageState();
@@ -375,6 +366,34 @@ class _OtpPageState extends State<OtpPage> {
   final TextEditingController _otpController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  Future<void> _chech_phone_number() async {
+    String check_number = widget.data;
+    try {
+      final response = await http.post(
+          Uri.parse(
+            "http://$ip:8000/user_profile/check_phone_number/",
+          ),
+          headers: {"Content-Type": "application/json"},
+          body: json.encode({
+            'phone_number': check_number}
+          ));
+      if (response.statusCode == 200) {
+        SharedPreferences perf = await SharedPreferences.getInstance();
+        await perf.setString('phone_number', check_number);
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("user already exist")));
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => HomePage()));
+      } else if (response.statusCode == 404){
+        await _user_profile();
+      }
+    } catch (e) {
+      // Handle exceptions such as network errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to connect to server: $e")),
+      );
+    }
+  }
 
   Future<void> _user_profile() async {
     String save_phone_number = widget.data;
@@ -382,23 +401,26 @@ class _OtpPageState extends State<OtpPage> {
     try {
       final response = await http.post(
         Uri.parse('http://$ip:8000/user_profile/user_create/'),
-        headers: {"Content-Type":"application/json"},
+        headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          'phone_number':save_phone_number,
+          'phone_number': save_phone_number,
         }),
       );
-      if(response.statusCode == 201){
-        SharedPreferences perf =await SharedPreferences.getInstance();
+      if (response.statusCode == 201) {
+        SharedPreferences perf = await SharedPreferences.getInstance();
         await perf.setString('phone_number', save_phone_number);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("phone number add successfully")));
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
-      }else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("phone number add successfully")));
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => HomePage()));
+      } else {
         print('add phone number failed:${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text("add phone number failed: ${response.body}")));
       }
     } catch (e) {}
   }
+
   void _verifyOtp() async {
     String otp = _otpController.text.trim();
 
@@ -409,13 +431,8 @@ class _OtpPageState extends State<OtpPage> {
       );
 
       await _auth.signInWithCredential(credential);
-      await _user_profile();
+      await _chech_phone_number();
 
-      // Navigate to Home Page
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => HomePage()),
-      // );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Invalid OTP')),
@@ -458,9 +475,9 @@ class _OtpPageState extends State<OtpPage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed:  () async{
+              onPressed: () async {
                 _verifyOtp;
-                await _user_profile();
+                // await _user_profile();
               },
               child: const Text('Verify OTP'),
             ),
@@ -470,6 +487,7 @@ class _OtpPageState extends State<OtpPage> {
     );
   }
 }
+
 //
 // import 'package:flutter/material.dart';
 // import 'package:firebase_auth/firebase_auth.dart';

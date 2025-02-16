@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -137,16 +138,73 @@ class _profileState extends State<profile> {
   update_profile? userprofile;
   bool isloading = true;
   String? errormessage;
+  File? img;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     user();
+    // _updateuserphoto();
+    _loadimg();
   }
 
+  Future<void> _pickImage() async{
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+     if(image!= null){
+       setState(() {
+         img =File(image.path);
+
+       });
+        _saveimg(image.path);
+     }
+  }
+
+  Future<void> _saveimg(String imag) async {
+    SharedPreferences prg = await SharedPreferences.getInstance();
+    await prg.setString("image_path", imag);
+  }
+
+  Future<void> _loadimg() async {
+    SharedPreferences perff = await SharedPreferences.getInstance();
+    String? imagepath = perff.getString("image_path");
+    if (imagepath != null) {
+      setState(() {
+        img = File(imagepath);
+      });
+    }
+  }
+
+  Future<void> _updateuserphoto() async{
+    File? immg = img;
+    try{
+      final response =await http.put(Uri.parse('http://$ip:8000/user_profile/user_edit/4/'),
+          headers: {"Content-Type":"application/json"},
+          body: jsonEncode({
+            'user_photo':immg
+          })
+      );
+
+      if(response.statusCode==200 || response.statusCode==204){
+        Navigator.pop(context);
+      }else{
+        print('update user photo failed:${response.body}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Update user photo failed: ${response.body}")),);
+      }
+
+    }catch (e) {
+      print('Error occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("An error occurred: $e")),
+      );
+    }
+  }
+
+
   Future<void> user()async{
-    final url = Uri.parse("http://$ip:8000/user_profile/user_edit/3/");
+    final url = Uri.parse("http://$ip:8000/user_profile/user_edit/4/");
     try {
       final response = await http.get(url);
       if(response.statusCode == 200){
@@ -189,7 +247,8 @@ class _profileState extends State<profile> {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        Container(
+        userprofile == null || userprofile!.firstName == null || userprofile!.lastName == null || userprofile!.age == null || userprofile!.email==null || userprofile!.gender ==null
+        ? Container(
           child: Padding(
             padding: const EdgeInsets.only(left: 18.0, right: 18,bottom: 10),
             child: OutlinedButton(
@@ -217,22 +276,69 @@ class _profileState extends State<profile> {
               ),
             ),
           ),
-        ),
+        )
+        :SizedBox(height: 2,),
         Divider(
           color: Colors.grey,
           thickness: 1,
           indent: 5,
           endIndent: 5,
         ),
-        Padding(
-          padding: EdgeInsets.only(left: 20.0,right: 20,top: 10,bottom: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+        Center(
+          child: Stack(
             children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundColor: Colors.red,
-              )
+              Container(
+                // width: scc.width * 1,
+                // color: Colors.red,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 20.0,right: 20,top: 10,bottom: 20),
+                  child: GestureDetector(
+                    onTap: () {
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => photo()));
+                    },
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      height: 130,
+                      width: 130,
+                      decoration: BoxDecoration(
+                        // color: Colors.red,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey,
+                                offset: Offset(0, 2),
+                                blurRadius: 12)
+                          ],
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: img != null
+                                ? FileImage(img!)
+                                : NetworkImage(
+                                '') // Provide a default image here
+                          )),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 13,
+                bottom: 20,
+                child: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.65),
+                      shape: BoxShape.circle),
+                  child: IconButton(
+                      onPressed: _pickImage,
+                      icon: Icon(
+                        Icons.camera_alt,
+                      )),
+                ),
+              ),
             ],
           ),
         ),
@@ -300,7 +406,7 @@ class _SaveDetailsState extends State<SaveDetails> {
     String gender = genders[selectedGenderIndex];
     String email = emailcontroller.text;
     try{
-      final response =await http.put(Uri.parse('http://$ip:8000/user_profile/user_edit/3/'),
+      final response =await http.put(Uri.parse('http://$ip:8000/user_profile/user_edit/4/'),
         headers: {"Content-Type":"application/json"},
         body: jsonEncode({
           'first_name':first_name,
