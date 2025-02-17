@@ -34,41 +34,24 @@ class user_create(APIView):
 
 
 class user_edit(APIView):
-    def get(self,request,pk):
-        user= get_object_or_404(user_profile,pk=pk)
+    def get(self,request,phone_number):
+        user= get_object_or_404(user_profile,phone_number=phone_number)
         serializer = user_profileSerializers(user)
         return Response(serializer.data)
     
-    def put(self,request,pk):
-        user =get_object_or_404(user_profile,pk=pk)
+    def put(self,request,phone_number):
+        user =get_object_or_404(user_profile,phone_number=phone_number)
         serializer =user_profileSerializers(user,data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)  # Correct status
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    def delete(self,request,pk):
-        user = get_object_or_404(user_profile,pk=pk)
+    def delete(self,request,phone_number):
+        user = get_object_or_404(user_profile,phone_number=phone_number)
         user.delete()
         return Response({'success':'deleted successfully'},status=status.HTTP_204_NO_CONTENT)
 
-
-# class CheckUserView(APIView):
-#     permission_classes =[AllowAny]
-
-#     def post(self, request):
-#         phone_number = request.data.get('phone_number')
-
-#         if not phone_number:
-#             return Response({'error': 'Phone number is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-#         # Check if the user exists
-#         user_exists = user_profile.objects.filter(phone_number=phone_number).exists()
-
-#         if user_exists:
-#             return Response({'message': 'User exists', 'status': 'old_user'}, status=status.HTTP_200_OK)
-#         else:
-#             return Response({'message': 'User does not exist', 'status': 'new_user'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class check_phoneno(APIView):
