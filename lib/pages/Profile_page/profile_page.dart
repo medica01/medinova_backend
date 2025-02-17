@@ -134,7 +134,7 @@ class profile extends StatefulWidget {
 
 
 class _profileState extends State<profile> {
-
+  String phone_number = "";
   update_profile? userprofile;
   bool isloading = true;
   String? errormessage;
@@ -179,7 +179,7 @@ class _profileState extends State<profile> {
   Future<void> _updateuserphoto() async{
     File? immg = img;
     try{
-      final response =await http.put(Uri.parse('http://$ip:8000/user_profile/user_edit/4/'),
+      final response =await http.put(Uri.parse('http://$ip:8000/user_profile/user_edit/5/'),
           headers: {"Content-Type":"application/json"},
           body: jsonEncode({
             'user_photo':immg
@@ -204,7 +204,13 @@ class _profileState extends State<profile> {
 
 
   Future<void> user()async{
-    final url = Uri.parse("http://$ip:8000/user_profile/user_edit/4/");
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = pref.getString('phone_number') ?? "917845711277";
+      phone_number = phone_number.replaceFirst('+', '');
+
+    });
+    final url = Uri.parse("http://$ip:8000/user_profile/user_edit/$phone_number/");
     try {
       final response = await http.get(url);
       if(response.statusCode == 200){
@@ -344,7 +350,7 @@ class _profileState extends State<profile> {
         ),
 
         isloading
-            ? Center(child: CircularProgressIndicator())
+            ? Center(child: Text("guest"))
             : userprofile != null
             ? Center(
               child: Text(
@@ -398,6 +404,7 @@ class _SaveDetailsState extends State<SaveDetails> {
   final TextEditingController lastnamecontroller = TextEditingController();
   final TextEditingController agecontroller = TextEditingController();
   final TextEditingController emailcontroller = TextEditingController();
+  String phone_number = "";
 
   Future<void> _updateuser() async{
     String first_name = firstnamecontroller.text;
@@ -405,8 +412,14 @@ class _SaveDetailsState extends State<SaveDetails> {
     String age = agecontroller.text;
     String gender = genders[selectedGenderIndex];
     String email = emailcontroller.text;
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = pref.getString('phone_number') ?? "917845711277";
+      phone_number = phone_number.replaceFirst('+', '');
+
+    });
     try{
-      final response =await http.put(Uri.parse('http://$ip:8000/user_profile/user_edit/4/'),
+      final response =await http.put(Uri.parse('http://$ip:8000/user_profile/user_edit/$phone_number/'),
         headers: {"Content-Type":"application/json"},
         body: jsonEncode({
           'first_name':first_name,
@@ -418,7 +431,7 @@ class _SaveDetailsState extends State<SaveDetails> {
       );
 
       if(response.statusCode==200 || response.statusCode==204){
-        Navigator.pop(context);
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>profile_page()));
       }else{
         print('update user details failed:${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(

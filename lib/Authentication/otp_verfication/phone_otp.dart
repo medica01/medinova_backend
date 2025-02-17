@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:health_hub/main.dart';
+import 'package:health_hub/pages/home_page/hoem_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -137,29 +139,103 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
     }
   }
 
+  // both android and web google login
   Future<User?> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
+      if (kIsWeb) {
+        GoogleAuthProvider googleProvider = GoogleAuthProvider();
+        googleProvider.setCustomParameters({'prompt': 'select_account'});
 
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
-      );
+        // Web-specific sign-in method
+        UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithPopup(googleProvider);
 
-      final userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
+        await saveUserData(userCredential.user);
 
-      // Save user data to Firestore
-      await saveUserData(userCredential.user);
+        return userCredential.user;
 
-      return userCredential.user;
+
+      } else {
+        // Android-specific sign-in method
+        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+        final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth?.accessToken,
+          idToken: googleAuth?.idToken,
+        );
+
+        final userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+
+        // Save user data to Firestore
+        await saveUserData(userCredential.user);
+
+        return userCredential.user;
+      }
     } catch (e) {
-      print('Exception -> $e');
+      print("Google Sign-In Error: $e");
       return null;
     }
   }
+
+  // Future<void> signOut() async {
+  //   await _auth.signOut();
+  //   if (!kIsWeb) {
+  //     await GoogleSignIn().signOut(); // Only needed for mobile
+  //   }
+  // }
+
+
+
+  // google login for web
+  // Future<User?> signInWithGoogle() async {
+  //   try {
+  //     GoogleAuthProvider googleProvider = GoogleAuthProvider();
+  //     googleProvider.setCustomParameters({'prompt': 'select_account'});
+  //
+  //     // Web-specific sign-in method
+  //     UserCredential userCredential =
+  //     await FirebaseAuth.instance.signInWithPopup(googleProvider);
+  //
+  //     User? user = userCredential.user;
+  //
+  //     if (user != null) {
+  //       print("User Email: ${user.email}");
+  //     }
+  //
+  //     return user;
+  //   } catch (e) {
+  //     print("Google Sign-In Error: $e");
+  //     return null;
+  //   }
+  // }
+
+
+  // Future<User?> signInWithGoogle() async {
+  //   try {
+  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  //     final GoogleSignInAuthentication? googleAuth =
+  //         await googleUser?.authentication;
+  //
+  //     final credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth?.accessToken,
+  //       idToken: googleAuth?.idToken,
+  //     );
+  //
+  //     final userCredential =
+  //         await FirebaseAuth.instance.signInWithCredential(credential);
+  //
+  //     // Save user data to Firestore
+  //     await saveUserData(userCredential.user);
+  //
+  //     return userCredential.user;
+  //   } catch (e) {
+  //     print('Exception -> $e');
+  //     return null;
+  //   }
+  // }
 
   Future<void> saveUserData(User? user) async {
     if (user != null) {
@@ -421,7 +497,7 @@ class _OtpPageState extends State<OtpPage> {
     } catch (e) {}
   }
 
-  void _verifyOtp() async {
+  Future<void> _verifyOtp() async {
     String otp = _otpController.text.trim();
 
     try {
@@ -431,7 +507,8 @@ class _OtpPageState extends State<OtpPage> {
       );
 
       await _auth.signInWithCredential(credential);
-      await _chech_phone_number();
+       await _chech_phone_number();
+      // Navigator.push(context, MaterialPageRoute(builder: (context)=>home_page()));
 
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -474,13 +551,14 @@ class _OtpPageState extends State<OtpPage> {
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                _verifyOtp;
-                // await _user_profile();
-              },
-              child: const Text('Verify OTP'),
-            ),
+        ElevatedButton(
+          onPressed: () async {
+            await _verifyOtp();  // Correct call to the method
+
+          },
+          child: const Text('Verify OTP'),
+        ),
+
           ],
         ),
       ),

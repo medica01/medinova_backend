@@ -108,7 +108,6 @@ class _home_pageState extends State<home_page> {
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
-        // Assuming the response is a single JSON object, not a list
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         setState(() {
           doctor_detail = [doctor_details.fromJson(jsonResponse)];

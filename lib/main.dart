@@ -1,14 +1,31 @@
 import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:health_hub/pages/home.dart';
 import 'Authentication/otp_verfication/phone_otp.dart';
+import 'firebase_option.dart';
+
 
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  if(kIsWeb){
+  await Firebase.initializeApp(
+     options: DefaultFirebaseOptions.currentPlatform,
+  );}
+  else{
+    await Firebase.initializeApp(
+    );
+  }
   runApp(first_screen());
 }
+// void main() async{
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await Firebase.initializeApp(
+//   );
+//   runApp(first_screen());
+// }
 
 String ip = "192.168.232.17";
 
