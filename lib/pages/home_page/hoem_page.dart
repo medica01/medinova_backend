@@ -6,62 +6,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_hub/main.dart';
 import 'package:health_hub/pages/home_page/all_doctor_2.dart';
 import 'package:health_hub/pages/home_page/doctor_profile_3.dart';
+import 'package:health_hub/pages/home_page/specific_doctor_4.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../Backend_doctor_details.dart';
 import '../../allfun.dart';
 import 'package:http/http.dart' as http;
 
-class doctor_details {
-  int? id;
-  String? doctorName;
-  String? specialty;
-  int? service;
-  String? language;
-  String? doctorImage;
-  String? qualification;
-  String? bio;
-  int? regNo;
-  String? doctorLocation;
 
-  doctor_details(
-      {this.id,
-      this.doctorName,
-      this.specialty,
-      this.service,
-      this.language,
-      this.doctorImage,
-      this.qualification,
-      this.bio,
-      this.regNo,
-      this.doctorLocation});
-
-  doctor_details.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    doctorName = json['doctor_name'];
-    specialty = json['specialty'];
-    service = json['service'];
-    language = json['language'];
-    doctorImage = json['doctor_image'];
-    qualification = json['qualification'];
-    bio = json['bio'];
-    regNo = json['reg_no'];
-    doctorLocation = json['doctor_location'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['doctor_name'] = this.doctorName;
-    data['specialty'] = this.specialty;
-    data['service'] = this.service;
-    data['language'] = this.language;
-    data['doctor_image'] = this.doctorImage;
-    data['qualification'] = this.qualification;
-    data['bio'] = this.bio;
-    data['reg_no'] = this.regNo;
-    data['doctor_location'] = this.doctorLocation;
-    return data;
-  }
-}
 
 class main_home extends StatefulWidget {
   const main_home({super.key});
@@ -88,7 +39,7 @@ class home_page extends StatefulWidget {
 }
 
 class _home_pageState extends State<home_page> {
-  bool heart =false;
+  bool heart = false;
   List<doctor_details> doctor_detail = [];
   bool isLoading = true;
   String? errorMessage;
@@ -99,8 +50,6 @@ class _home_pageState extends State<home_page> {
     _name();
     _showdoctor();
   }
-
-
 
   Future<void> _showdoctor() async {
     final url = Uri.parse(
@@ -128,8 +77,6 @@ class _home_pageState extends State<home_page> {
     }
   }
 
-
-
   String name = "";
   String photourl = "";
 
@@ -147,20 +94,29 @@ class _home_pageState extends State<home_page> {
     });
   }
 
-  Widget a(String text) {
+  Widget a(String text, BuildContext context,Widget page) {
     return Padding(
       padding: EdgeInsets.only(left: 10.0),
-      child: Container(
-        height: 100,
-        width: 150,
-        decoration: BoxDecoration(
-            color: Colors.blueAccent, borderRadius: BorderRadius.circular(20)),
-        child: Center(
-            child: Text(
-          text,
-          style: TextStyle(
-              color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-        )),
+      child: Builder(
+        builder: (context) {
+          return GestureDetector(
+            onTap:(){ Navigator.push(
+                context, MaterialPageRoute(builder: (context) => page));},
+            child: Container(
+              height: 100,
+              width: 150,
+              decoration: BoxDecoration(
+                  color: Colors.blueAccent,
+                  borderRadius: BorderRadius.circular(20)),
+              child: Center(
+                  child: Text(
+                text,
+                style: TextStyle(
+                    color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+              )),
+            ),
+          );
+        }
       ),
     );
   }
@@ -175,7 +131,6 @@ class _home_pageState extends State<home_page> {
               padding: EdgeInsets.only(left: 8.0),
               child: CircleAvatar(
                 radius: 22.0,
-
                 backgroundImage: NetworkImage("$photourl"),
               ),
             ),
@@ -280,16 +235,16 @@ class _home_pageState extends State<home_page> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  a("Dentist"),
-                  a("Therapist"),
-                  a("Orthodontist"),
-                  a("Periodontist"),
-                  a("Oral and Maxillofacial Surgeon"),
-                  a("General Surgeon"),
-                  a("Pediatrician"),
-                  a("Ophthalmologist"),
-                  a("Cardiologist"),
-                  a("Physiotherapist"),
+                  a("Dentist",context,Specific(data : "Dentist")),
+                  a("Therapist",context,Specific(data: "Therapist",)),
+                  a("Orthodontist",context,Specific(data: "Orthodontist",)),
+                  a("Periodontist",context,Specific(data: "Periodontist",)),
+                  a("Oral Surgeon",context,Specific(data: "Oral Surgeon",)),
+                  a("General Surgeon",context,Specific(data: "General Surgeon",)),
+                  a("Pediatrician",context,Specific(data: "Pediatrician",)),
+                  a("Ophthalmologist",context,Specific(data: "Ophthalmologist",)),
+                  a("Cardiologist",context,Specific(data: "Cardiologist",)),
+                  a("Physiotherapist",context,Specific(data: "Physiotherapist",)),
                 ],
               ),
             ),
@@ -302,10 +257,14 @@ class _home_pageState extends State<home_page> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 text("All Doctors", Colors.black, 24, FontWeight.bold),
-            GestureDetector(onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>all_doctor()));
-            },
-                child: text("See All", Colors.grey, 20, FontWeight.bold)),
+                GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => all_doctor()));
+                    },
+                    child: text("See All", Colors.grey, 20, FontWeight.bold)),
               ],
             ),
           ),
@@ -324,7 +283,6 @@ class _home_pageState extends State<home_page> {
                             color: Colors.blue.shade50,
                             borderRadius: BorderRadius.circular(40),
                           ),
-
                           height: 200,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -344,27 +302,33 @@ class _home_pageState extends State<home_page> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           "${doctor.doctorName ?? "unknown"}",
                                           style: TextStyle(
-                                              color: Colors.black, fontSize: 20),
+                                              color: Colors.black,
+                                              fontSize: 20),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.only(left: 48.0),
-                                          child: IconButton(onPressed: (){
-                                            setState(() {
-                                              heart=!heart;
-                                            });
-                                          }, icon: Icon(
-                                          heart
-                                          ? FontAwesomeIcons.solidHeart
-                                              : FontAwesomeIcons.heart,
-                                            color: heart
-                                                ? Colors.red
-                                                : Colors.grey,
-                                          ),),
+                                          padding:
+                                              const EdgeInsets.only(left: 48.0),
+                                          child: IconButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                heart = !heart;
+                                              });
+                                            },
+                                            icon: Icon(
+                                              heart
+                                                  ? FontAwesomeIcons.solidHeart
+                                                  : FontAwesomeIcons.heart,
+                                              color: heart
+                                                  ? Colors.red
+                                                  : Colors.grey,
+                                            ),
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -376,32 +340,47 @@ class _home_pageState extends State<home_page> {
                                           color: Colors.grey,
                                           fontSize: 14,
                                         ),
-                                        maxLines: 3, // Limit the text to 3 lines
-                                        overflow: TextOverflow.ellipsis, // Add "..." if the text exceeds maxLines
+                                        maxLines:
+                                            3, // Limit the text to 3 lines
+                                        overflow: TextOverflow
+                                            .ellipsis, // Add "..." if the text exceeds maxLines
                                       ),
                                     ),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
                                       children: [
-                                        OutlinedButton(onPressed: (){
-                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>doc_profile(data: "${doctor.id}",)));
-                                        }, child: Text("Book")),
+                                        OutlinedButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          doc_profile(
+                                                            data:
+                                                                "${doctor.id}",
+                                                          )));
+                                            },
+                                            child: Text("Book")),
                                         Padding(
-                                          padding:  EdgeInsets.only(left: 38.0),
+                                          padding: EdgeInsets.only(left: 38.0),
                                           child: Row(
                                             children: [
-                                              Icon(Icons.star,color: Colors.yellow,),
+                                              Icon(
+                                                Icons.star,
+                                                color: Colors.yellow,
+                                              ),
                                             ],
                                           ),
                                         ),
                                         Container(
-                                          width: 60,
-                                            child: Text("${doctor.regNo ?? 0}")),
+                                            width: 60,
+                                            child:
+                                                Text("${doctor.regNo ?? 0}")),
                                       ],
                                     )
                                   ],
                                 ),
-
                               )
                             ],
                           ),

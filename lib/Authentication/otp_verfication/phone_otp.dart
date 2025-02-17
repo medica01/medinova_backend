@@ -16,56 +16,34 @@ import 'package:sim_card_info/sim_card_info.dart';
 import 'package:sim_card_info/sim_info.dart';
 import 'package:http/http.dart' as http;
 
-class update_profile {
-  int? id;
-  String? createdAt;
-  String? firstName;
-  String? lastName;
-  String? gender;
-  String? age;
-  int? phoneNumber;
-  String? email;
-  String? location;
-  String? userPhoto;
 
-  update_profile(
-      {this.id,
-      this.createdAt,
-      this.firstName,
-      this.lastName,
-      this.gender,
-      this.age,
-      this.phoneNumber,
-      this.email,
-      this.location,
-      this.userPhoto});
 
-  update_profile.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    createdAt = json['created_at'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-    gender = json['gender'];
-    age = json['age'];
-    phoneNumber = json['phone_number'];
-    email = json['email'];
-    location = json['location'];
-    userPhoto = json['user_photo'];
+class Phone_Enter extends StatefulWidget {
+  const Phone_Enter({super.key});
+
+  @override
+  State<Phone_Enter> createState() => _Phone_EnterState();
+}
+
+class _Phone_EnterState extends State<Phone_Enter> {
+  bool _login = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _checklogin();
   }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['created_at'] = this.createdAt;
-    data['first_name'] = this.firstName;
-    data['last_name'] = this.lastName;
-    data['gender'] = this.gender;
-    data['age'] = this.age;
-    data['phone_number'] = this.phoneNumber;
-    data['email'] = this.email;
-    data['location'] = this.location;
-    data['user_photo'] = this.userPhoto;
-    return data;
+  Future<void> _checklogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool login = prefs.getBool('login') ?? false;
+    setState(() {
+      _login = login ?? false;
+    });
+  }
+  @override
+  Widget build(BuildContext context) {
+    return _login ?HomePage():PhoneEntryPage();
   }
 }
 
@@ -455,6 +433,7 @@ class _OtpPageState extends State<OtpPage> {
           ));
       if (response.statusCode == 200) {
         SharedPreferences perf = await SharedPreferences.getInstance();
+        await perf.setBool('login', true);
         await perf.setString('phone_number', check_number);
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("user already exist")));
@@ -484,6 +463,7 @@ class _OtpPageState extends State<OtpPage> {
       );
       if (response.statusCode == 201) {
         SharedPreferences perf = await SharedPreferences.getInstance();
+        await perf.setBool('login', true);
         await perf.setString('phone_number', save_phone_number);
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("phone number add successfully")));

@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:health_hub/pages/home_page/all_doctor_2.dart';
 
+import '../../Backend_doctor_details.dart';
+
 class doc_profile extends StatefulWidget {
   final dynamic data;
 
