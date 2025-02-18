@@ -1,0 +1,66 @@
+from datetime import datetime
+from django.shortcuts import render
+from rest_framework import status # type: ignore
+from rest_framework.decorators import api_view
+from rest_framework.response import Response 
+from .models import *
+from .serializers import *
+from django.http import Http404, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.views import APIView # type: ignore
+from rest_framework.response import Response
+from django.http import HttpResponse
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.shortcuts import get_object_or_404
+
+# Create your views here.
+
+class create_booking_doctor(APIView):
+    permission_classes =[AllowAny]
+
+    def post(self,request):
+        doctor_id = request.data.get("id")
+        phone_number = request.data.get("phone_number")
+        booking_date = request.data.get("booking_date")
+        booking_time = request.data.get("booking_time")
+
+        # get the doctor details
+        doctor = get_object_or_404(doctor_details,id=doctor_id)
+        
+
+        booking_doctorr= booking_doctor.objects.create(
+            doctor=doctor,
+            phone_number=phone_number,
+            doctor_name=doctor.doctor_name,
+            specialty=doctor.specialty,
+            service=doctor.service,
+            language=doctor.language,
+            doctor_image=doctor.doctor_image,
+            qualification=doctor.qualification,
+            bio=doctor.bio,
+            reg_no=doctor.reg_no,
+            doctor_location=doctor.doctor_location,
+            booking_date=datetime.strptime(booking_date, "%Y-%m-%d").date(),
+            booking_time=datetime.strptime(booking_time, "%H:%M").time()
+        )
+
+        serializer = booking_doctorSerializer(booking_doctorr)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+class spec_user_booking(APIView):
+    permission_classes = [AllowAny]
+
+
+    def get(self,request,phone_number):
+        user_booking = booking_doctor.objects.filter(phone_number=phone_number)
+
+
+        serializer = booking_doctorSerializer(user_booking,many=True)
+
+        return Response(serializer.data)
