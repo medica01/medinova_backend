@@ -12,8 +12,6 @@ import '../../Backend_doctor_details.dart';
 import '../../allfun.dart';
 import 'package:http/http.dart' as http;
 
-
-
 class main_home extends StatefulWidget {
   const main_home({super.key});
 
@@ -94,30 +92,32 @@ class _home_pageState extends State<home_page> {
     });
   }
 
-  Widget a(String text, BuildContext context,Widget page) {
+  Widget a(String text, BuildContext context, Widget page) {
     return Padding(
       padding: EdgeInsets.only(left: 10.0),
-      child: Builder(
-        builder: (context) {
-          return GestureDetector(
-            onTap:(){ Navigator.push(
-                context, MaterialPageRoute(builder: (context) => page));},
-            child: Container(
-              height: 100,
-              width: 150,
-              decoration: BoxDecoration(
-                  color: Colors.blueAccent,
-                  borderRadius: BorderRadius.circular(20)),
-              child: Center(
-                  child: Text(
-                text,
-                style: TextStyle(
-                    color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-              )),
-            ),
-          );
-        }
-      ),
+      child: Builder(builder: (context) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => page));
+          },
+          child: Container(
+            height: 100,
+            width: 150,
+            decoration: BoxDecoration(
+                color: Colors.blueAccent,
+                borderRadius: BorderRadius.circular(20)),
+            child: Center(
+                child: Text(
+              text,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
+            )),
+          ),
+        );
+      }),
     );
   }
 
@@ -235,16 +235,61 @@ class _home_pageState extends State<home_page> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  a("Dentist",context,Specific(data : "Dentist")),
-                  a("Therapist",context,Specific(data: "Therapist",)),
-                  a("Orthodontist",context,Specific(data: "Orthodontist",)),
-                  a("Periodontist",context,Specific(data: "Periodontist",)),
-                  a("Oral Surgeon",context,Specific(data: "Oral Surgeon",)),
-                  a("General Surgeon",context,Specific(data: "General Surgeon",)),
-                  a("Pediatrician",context,Specific(data: "Pediatrician",)),
-                  a("Ophthalmologist",context,Specific(data: "Ophthalmologist",)),
-                  a("Cardiologist",context,Specific(data: "Cardiologist",)),
-                  a("Physiotherapist",context,Specific(data: "Physiotherapist",)),
+                  a("Dentist", context, Specific(data: "Dentist")),
+                  a(
+                      "Therapist",
+                      context,
+                      Specific(
+                        data: "Therapist",
+                      )),
+                  a(
+                      "Orthodontist",
+                      context,
+                      Specific(
+                        data: "Orthodontist",
+                      )),
+                  a(
+                      "Periodontist",
+                      context,
+                      Specific(
+                        data: "Periodontist",
+                      )),
+                  a(
+                      "Oral Surgeon",
+                      context,
+                      Specific(
+                        data: "Oral Surgeon",
+                      )),
+                  a(
+                      "General Surgeon",
+                      context,
+                      Specific(
+                        data: "General Surgeon",
+                      )),
+                  a(
+                      "Pediatrician",
+                      context,
+                      Specific(
+                        data: "Pediatrician",
+                      )),
+                  a(
+                      "Ophthalmologist",
+                      context,
+                      Specific(
+                        data: "Ophthalmologist",
+                      )),
+                  a(
+                      "Cardiologist",
+                      context,
+                      Specific(
+                        data: "Cardiologist",
+                      )),
+                  a(
+                      "Physiotherapist",
+                      context,
+                      Specific(
+                        data: "Physiotherapist",
+                      )),
                 ],
               ),
             ),
@@ -283,7 +328,7 @@ class _home_pageState extends State<home_page> {
                             color: Colors.blue.shade50,
                             borderRadius: BorderRadius.circular(40),
                           ),
-                          height: 200,
+                          height: 210,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -332,18 +377,40 @@ class _home_pageState extends State<home_page> {
                                         ),
                                       ],
                                     ),
-                                    Container(
-                                      width: 200,
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 5.0),
                                       child: Text(
-                                        doctor.bio ?? "No bio",
+                                        doctor.specialty ?? "No specility",
                                         style: TextStyle(
-                                          color: Colors.grey,
                                           fontSize: 14,
                                         ),
-                                        maxLines:
-                                            3, // Limit the text to 3 lines
-                                        overflow: TextOverflow
-                                            .ellipsis, // Add "..." if the text exceeds maxLines
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 5.0),
+                                      child: Text(
+                                        "${doctor.service ?? "No service"}years of exp",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 5.0),
+                                      child: Text(
+                                        doctor.language ?? "english",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 5.0),
+                                      child: Text(
+                                        doctor.doctorLocation ?? "No specility",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        ),
                                       ),
                                     ),
                                     Row(

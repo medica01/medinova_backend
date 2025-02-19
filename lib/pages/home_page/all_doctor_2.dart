@@ -119,12 +119,13 @@ class _doctor_idState extends State<doctor_id> {
                 ? Padding(
                     padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 15),
                     child: Container(
+                      clipBehavior: Clip.hardEdge,
                       decoration: BoxDecoration(
                         color: Colors.blue.shade50,
                         borderRadius: BorderRadius.circular(40),
                       ),
 
-                      height: 200,
+                      height: 210,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -144,15 +145,17 @@ class _doctor_idState extends State<doctor_id> {
                               children: [
                                 Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       "${doctor.doctorName ?? "unknown"}",
                                       style: TextStyle(
-                                          color: Colors.black, fontSize: 18),
+                                          color: Colors.black,
+                                          fontSize: 20),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(left: 48.0),
+                                      padding:
+                                      const EdgeInsets.only(left: 48.0),
                                       child: IconButton(
                                         onPressed: () {
                                           setState(() {
@@ -163,33 +166,72 @@ class _doctor_idState extends State<doctor_id> {
                                           heart
                                               ? FontAwesomeIcons.solidHeart
                                               : FontAwesomeIcons.heart,
-                                          color: heart ? Colors.red : Colors.grey,
+                                          color: heart
+                                              ? Colors.red
+                                              : Colors.grey,
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
-                                Container(
-                                  width: 200,
+                                Padding(
+                                  padding:  EdgeInsets.only(bottom: 5.0),
                                   child: Text(
-                                    doctor.bio ?? "No bio",
+                                    doctor.specialty ?? "No specility",
                                     style: TextStyle(
-                                      color: Colors.grey,
+
                                       fontSize: 14,
                                     ),
-                                    maxLines: 3, // Limit the text to 3 lines
-                                    overflow: TextOverflow
-                                        .ellipsis, // Add "..." if the text exceeds maxLines
+
+                                  ),
+                                ),Padding(
+                                  padding:  EdgeInsets.only(bottom: 5.0),
+                                  child: Text(
+                                    "${doctor.service ?? "No service"}years of exp",
+                                    style: TextStyle(
+
+                                      fontSize: 14,
+                                    ),
+
+                                  ),
+                                ),Padding(
+                                  padding:  EdgeInsets.only(bottom: 5.0),
+                                  child: Text(
+                                    doctor.language ?? "english",
+                                    style: TextStyle(
+
+                                      fontSize: 14,
+                                    ),
+
+                                  ),
+                                ),Padding(
+                                  padding:  EdgeInsets.only(bottom: 5.0),
+                                  child: Text(
+                                    doctor.doctorLocation ?? "No specility",
+                                    style: TextStyle(
+
+                                      fontSize: 14,
+                                    ),
+
                                   ),
                                 ),
+
                                 Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                  MainAxisAlignment.spaceEvenly,
                                   children: [
                                     OutlinedButton(
                                         onPressed: () {
-                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>doc_profile(data: "${doctor.id}",)));
-                                        }, child: Text("Book",style: TextStyle(color: Color(0xff0a8eac)),)),
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      doc_profile(
+                                                        data:
+                                                        "${doctor.id}",
+                                                      )));
+                                        },
+                                        child: Text("Book")),
                                     Padding(
                                       padding: EdgeInsets.only(left: 38.0),
                                       child: Row(
@@ -203,7 +245,8 @@ class _doctor_idState extends State<doctor_id> {
                                     ),
                                     Container(
                                         width: 60,
-                                        child: Text("${doctor.regNo ?? 0}")),
+                                        child:
+                                        Text("${doctor.regNo ?? 0}")),
                                   ],
                                 )
                               ],

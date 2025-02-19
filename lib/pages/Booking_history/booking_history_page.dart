@@ -14,7 +14,9 @@ class _booking_history_pageState extends State<booking_history_page> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: Text("booking history page"),
+          title: Text("booking history",style: TextStyle(
+            fontWeight: FontWeight.bold
+          ),),
         ),
         body: Center(
           child: Container(

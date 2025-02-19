@@ -19,6 +19,7 @@ void main() async{
     );
   }
   runApp(first_screen());
+
 }
 // void main() async{
 //   WidgetsFlutterBinding.ensureInitialized();

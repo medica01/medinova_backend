@@ -360,7 +360,7 @@ class _profileState extends State<profile> {
             )
             : Center(
           child: Text(
-            errormessage ?? "No user data found",
+            errormessage ?? "Guest",
             style: TextStyle(fontSize: 18, color: Colors.red),
           ),
         ),
@@ -399,7 +399,7 @@ class SaveDetails extends StatefulWidget {
 class _SaveDetailsState extends State<SaveDetails> {
   final _form = GlobalKey<FormState>();
   final List<String> genders = ["Male", "Female", "Other"];
-  int selectedGenderIndex = 0; // Default gender is "Male"
+  int selectedGenderIndex = -1; // Default gender is "Male"
   final TextEditingController firstnamecontroller = TextEditingController();
   final TextEditingController lastnamecontroller = TextEditingController();
   final TextEditingController agecontroller = TextEditingController();
