@@ -78,6 +78,7 @@ class _doctor_idState extends State<doctor_id> {
     _showdoctor1();
   }
 
+  //  request for retrieve the all the json using get
   Future<void> _showdoctor1() async {
     final url = Uri.parse(
         "http://$ip:8000/doctor_details/doctor_addetails/");
@@ -187,7 +188,7 @@ class _doctor_idState extends State<doctor_id> {
                                 ),Padding(
                                   padding:  EdgeInsets.only(bottom: 5.0),
                                   child: Text(
-                                    "${doctor.service ?? "No service"}years of exp",
+                                    "${doctor.service ?? "No service"} years of exp",
                                     style: TextStyle(
 
                                       fontSize: 14,

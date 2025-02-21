@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,15 +28,15 @@ class update_profile {
 
   update_profile(
       {this.id,
-        this.createdAt,
-        this.firstName,
-        this.lastName,
-        this.gender,
-        this.age,
-        this.phoneNumber,
-        this.email,
-        this.location,
-        this.userPhoto});
+      this.createdAt,
+      this.firstName,
+      this.lastName,
+      this.gender,
+      this.age,
+      this.phoneNumber,
+      this.email,
+      this.location,
+      this.userPhoto});
 
   update_profile.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -66,7 +67,6 @@ class update_profile {
   }
 }
 
-
 class profile_page extends StatefulWidget {
   const profile_page({super.key});
 
@@ -76,18 +76,62 @@ class profile_page extends StatefulWidget {
 
 class _profile_pageState extends State<profile_page> {
 
-  Future<bool> signOutFromGoogle() async {
+  // Future<bool> signOutFromGoogleAnd() async {
+  //   try {
+  //     final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //
+  //     // Remove the 'login' key to clear the logged-in state
+  //     await prefs.remove('login');
+  //     await FirebaseAuth.instance.signOut();
+  //     await GoogleSignIn().signOut();
+  //     Navigator.pushAndRemoveUntil(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => PhoneEntryPage()),
+  //       (route) => false,
+  //     );
+  //
+  //     return true;
+  //   } catch (e) {
+  //     print('Sign-out error: $e');
+  //     return false;
+  //   }
+  // }
+  //
+  // Future<bool> signOutFromGoogleWeb(BuildContext context) async {
+  //   try {
+  //     final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     await prefs.remove('login');
+  //
+  //     // Web: Revoke access and sign out completely
+  //     await FirebaseAuth.instance.signOut();
+  //     await GoogleSignIn().disconnect();
+  //     await GoogleSignIn().signOut();
+  //
+  //     // Navigate to login screen
+  //     Navigator.pushAndRemoveUntil(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => PhoneEntryPage()),
+  //       (route) => false,
+  //     );
+  //
+  //     return true;
+  //   } catch (e) {
+  //     print('Sign-out error (Web): $e');
+  //     return false;
+  //   }
+  // }
+
+  Future<bool> signOutFromphone() async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
 
       // Remove the 'login' key to clear the logged-in state
       await prefs.remove('login');
-      await FirebaseAuth.instance.signOut();
-      await GoogleSignIn().signOut();
+
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => PhoneEntryPage()),
-        (route) => false,
+            (route) => false,
       );
 
       return true;
@@ -96,31 +140,33 @@ class _profile_pageState extends State<profile_page> {
       return false;
     }
   }
-
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color(0xfffdfdfd),
-          title: text("Profile", Colors.black, 30, FontWeight.bold),
-          actions: [
-            Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: IconButton(
-                  onPressed: () => signOutFromGoogle(),
-                  icon: Icon(
-                    Icons.logout,
-                    color: Color(0xff1f8acc),
-                    size: 30,
-                  ),
-                )),
-          ],
-        ),
-        body: const profile(),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xfffdfdfd),
+        title: text("Profile", Colors.black, 30, FontWeight.bold),
+        actions: [
+          Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: IconButton(
+                // onPressed: () {
+                //   if (kIsWeb) {
+                //     signOutFromGoogleWeb(context);
+                //   } else {
+                //     signOutFromGoogleAnd();
+                //   }
+                // },
+                onPressed: ()=>signOutFromphone(),
+                icon: Icon(
+                  Icons.logout,
+                  color: Color(0xff1f8acc),
+                  size: 30,
+                ),
+              )),
+        ],
       ),
+      body: profile(),
     );
   }
 }
@@ -131,7 +177,6 @@ class profile extends StatefulWidget {
   @override
   State<profile> createState() => _profileState();
 }
-
 
 class _profileState extends State<profile> {
   String phone_number = "";
@@ -150,15 +195,14 @@ class _profileState extends State<profile> {
     _loadimg();
   }
 
-  Future<void> _pickImage() async{
+  Future<void> _pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-     if(image!= null){
-       setState(() {
-         img =File(image.path);
-
-       });
-        _saveimg(image.path);
-     }
+    if (image != null) {
+      setState(() {
+        img = File(image.path);
+      });
+      _saveimg(image.path);
+    }
   }
 
   Future<void> _saveimg(String imag) async {
@@ -176,25 +220,23 @@ class _profileState extends State<profile> {
     }
   }
 
-  Future<void> _updateuserphoto() async{
+  Future<void> _updateuserphoto() async {
     File? immg = img;
-    try{
-      final response =await http.put(Uri.parse('http://$ip:8000/user_profile/user_edit/5/'),
-          headers: {"Content-Type":"application/json"},
-          body: jsonEncode({
-            'user_photo':immg
-          })
-      );
+    try {
+      final response = await http.put(
+          Uri.parse('http://$ip:8000/user_profile/user_edit/5/'),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({'user_photo': immg}));
 
-      if(response.statusCode==200 || response.statusCode==204){
+      if (response.statusCode == 200 || response.statusCode == 204) {
         Navigator.pop(context);
-      }else{
+      } else {
         print('update user photo failed:${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Update user photo failed: ${response.body}")),);
+          SnackBar(content: Text("Update user photo failed: ${response.body}")),
+        );
       }
-
-    }catch (e) {
+    } catch (e) {
       print('Error occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("An error occurred: $e")),
@@ -202,32 +244,31 @@ class _profileState extends State<profile> {
     }
   }
 
-
-  Future<void> user()async{
+  Future<void> user() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
       phone_number = pref.getString('phone_number') ?? "917845711277";
       phone_number = phone_number.replaceFirst('+', '');
-
     });
-    final url = Uri.parse("http://$ip:8000/user_profile/user_edit/$phone_number/");
+    final url =
+        Uri.parse("http://$ip:8000/user_profile/user_edit/$phone_number/");
     try {
       final response = await http.get(url);
-      if(response.statusCode == 200){
-        Map<String,dynamic> jsonResponse = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         setState(() {
           userprofile = update_profile.fromJson(jsonResponse);
-          isloading=false;
+          isloading = false;
         });
-      }else{
+      } else {
         setState(() {
           errormessage = "failed to load user details";
-          isloading=false;
+          isloading = false;
         });
       }
-    }catch(e){
+    } catch (e) {
       errormessage = e.toString();
-      isloading=false;
+      isloading = false;
     }
   }
 
@@ -235,7 +276,7 @@ class _profileState extends State<profile> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 18.0),
       child: ListTile(
-        leading:  CircleAvatar(
+        leading: CircleAvatar(
           backgroundColor: Color(0xffe5f4f1),
           child: Icon(icon, color: Color(0xff1f8acc)),
         ),
@@ -244,46 +285,55 @@ class _profileState extends State<profile> {
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         trailing:
-        const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
         onTap: onTap,
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        userprofile == null || userprofile!.firstName == null || userprofile!.lastName == null || userprofile!.age == null || userprofile!.email==null || userprofile!.gender ==null
-        ? Container(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 18.0, right: 18,bottom: 10),
-            child: OutlinedButton(
-              onPressed: () {
-                showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (context) {
-                      return SaveDetails();
-                    });
-              },
-              child: Text(
-                "Create Profile",
-                style: TextStyle(color: Color(0xff1f8acc), fontSize: 20),
-              ),
-              style: OutlinedButton.styleFrom(
-                minimumSize: Size(100, 50),
-                // Ensures the button is at least this size
-                padding: EdgeInsets.zero,
-                // Ensures no extra padding affects width
-                side: BorderSide(color: Color(0xff1f8acc)),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(40),
+        userprofile == null ||
+                userprofile!.firstName == null ||
+                userprofile!.lastName == null ||
+                userprofile!.age == null ||
+                userprofile!.email == null ||
+                userprofile!.gender == null
+            ? Container(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.only(left: 18.0, right: 18, bottom: 10),
+                  child: OutlinedButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) {
+                            return SaveDetails();
+                          });
+                    },
+                    child: Text(
+                      "Create Profile",
+                      style: TextStyle(color: Color(0xff1f8acc), fontSize: 20),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: Size(100, 50),
+                      // Ensures the button is at least this size
+                      padding: EdgeInsets.zero,
+                      // Ensures no extra padding affects width
+                      side: BorderSide(color: Color(0xff1f8acc)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                    ),
+                  ),
                 ),
+              )
+            : SizedBox(
+                height: 2,
               ),
-            ),
-          ),
-        )
-        :SizedBox(height: 2,),
         Divider(
           color: Colors.grey,
           thickness: 1,
@@ -297,7 +347,8 @@ class _profileState extends State<profile> {
                 // width: scc.width * 1,
                 // color: Colors.red,
                 child: Padding(
-                  padding: EdgeInsets.only(left: 20.0,right: 20,top: 10,bottom: 20),
+                  padding: EdgeInsets.only(
+                      left: 20.0, right: 20, top: 10, bottom: 20),
                   child: GestureDetector(
                     onTap: () {
                       // Navigator.push(
@@ -310,7 +361,7 @@ class _profileState extends State<profile> {
                       height: 130,
                       width: 130,
                       decoration: BoxDecoration(
-                        // color: Colors.red,
+                          // color: Colors.red,
                           boxShadow: [
                             BoxShadow(
                                 color: Colors.grey,
@@ -319,12 +370,12 @@ class _profileState extends State<profile> {
                           ],
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: img != null
-                                ? FileImage(img!)
-                                : NetworkImage(
-                                '') // Provide a default image here
-                          )),
+                              fit: BoxFit.cover,
+                              image: img != null
+                                  ? FileImage(img!)
+                                  : NetworkImage(
+                                      '') // Provide a default image here
+                              )),
                     ),
                   ),
                 ),
@@ -352,26 +403,26 @@ class _profileState extends State<profile> {
         isloading
             ? Center(child: Text("guest"))
             : userprofile != null
-            ? Center(
-              child: Text(
-                        "${userprofile!.firstName ?? ''} ${userprofile!.lastName ?? ''}",
-                        style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
-                      ),
-            )
-            : Center(
-          child: Text(
-            errormessage ?? "Guest",
-            style: TextStyle(fontSize: 18, color: Colors.red),
-          ),
-        ),
+                ? Center(
+                    child: Text(
+                      "${userprofile!.firstName ?? ''} ${userprofile!.lastName ?? ''}",
+                      style:
+                          TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+                    ),
+                  )
+                : Center(
+                    child: Text(
+                      errormessage ?? "Guest",
+                      style: TextStyle(fontSize: 18, color: Colors.red),
+                    ),
+                  ),
 
         const SizedBox(height: 10),
         // Menu Items with Navigation
         menu_item('Personal details', CupertinoIcons.profile_circled, () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) => personal_details()),
+            MaterialPageRoute(builder: (context) => personal_details()),
           );
         }),
         menu_item('Settings', Icons.settings, () {
@@ -383,7 +434,6 @@ class _profileState extends State<profile> {
         }),
         menu_item('About', CupertinoIcons.info, () {}),
         menu_item('Help', Icons.help_outline, () {}),
-
       ],
     );
   }
@@ -406,7 +456,7 @@ class _SaveDetailsState extends State<SaveDetails> {
   final TextEditingController emailcontroller = TextEditingController();
   String phone_number = "";
 
-  Future<void> _updateuser() async{
+  Future<void> _updateuser() async {
     String first_name = firstnamecontroller.text;
     String last_name = lastnamecontroller.text;
     String age = agecontroller.text;
@@ -416,29 +466,30 @@ class _SaveDetailsState extends State<SaveDetails> {
     setState(() {
       phone_number = pref.getString('phone_number') ?? "917845711277";
       phone_number = phone_number.replaceFirst('+', '');
-
     });
-    try{
-      final response =await http.put(Uri.parse('http://$ip:8000/user_profile/user_edit/$phone_number/'),
-        headers: {"Content-Type":"application/json"},
-        body: jsonEncode({
-          'first_name':first_name,
-          'last_name':last_name,
-          'gender':gender,
-          'age': age,
-          'email':email
-        })
-      );
+    try {
+      final response = await http.put(
+          Uri.parse('http://$ip:8000/user_profile/user_edit/$phone_number/'),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({
+            'first_name': first_name,
+            'last_name': last_name,
+            'gender': gender,
+            'age': age,
+            'email': email
+          }));
 
-      if(response.statusCode==200 || response.statusCode==204){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>profile_page()));
-      }else{
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => profile_page()));
+      } else {
         print('update user details failed:${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Update user details failed: ${response.body}")),);
+          SnackBar(
+              content: Text("Update user details failed: ${response.body}")),
+        );
       }
-
-    }catch (e) {
+    } catch (e) {
       print('Error occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("An error occurred: $e")),

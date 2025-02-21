@@ -91,6 +91,7 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
           setState(() {
             phoneNumber =
                 simInfo[0].number; // Get the phone number of the first SIM card
+            phoneNumber=phoneNumber?.replaceFirst("+91", "");
             _phoneController.text = phoneNumber!;
             isLoading = false;
           });
@@ -298,7 +299,7 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       decoration: InputDecoration(
                         focusColor: Color(0xff46c8bb),
-                        contentPadding: EdgeInsets.only(left: 90),
+                        contentPadding: EdgeInsets.only(left: 120),
                         counterText: "",
                         hintText: 'Enter Phone Number',
                         hintStyle: TextStyle(color: Color(0xff1f8acc)),

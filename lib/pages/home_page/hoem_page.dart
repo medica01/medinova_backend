@@ -389,7 +389,7 @@ class _home_pageState extends State<home_page> {
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 5.0),
                                       child: Text(
-                                        "${doctor.service ?? "No service"}years of exp",
+                                        "${doctor.service ?? "No service"} years of exp",
                                         style: TextStyle(
                                           fontSize: 14,
                                         ),

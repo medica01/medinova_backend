@@ -80,6 +80,7 @@ class _Specif_docState extends State<Specif_doc> {
     _showdoctor1();
   }
 
+  //  request for retrieve the all the json using get
   Future<void> _showdoctor1() async {
 
     final url = Uri.parse(

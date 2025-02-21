@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_hub/main.dart';
 import 'package:health_hub/pages/Booking_history/booking_history_page.dart';
+import 'package:health_hub/pages/home.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:health_hub/pages/home_page/all_doctor_2.dart';
@@ -26,8 +27,8 @@ class _doc_profileState extends State<doc_profile> {
   String? errorMessage;
   String? pk;
   DateTime now = DateTime.now();
-  int selectedDateIndex = -1;
-  int selectedTimeIndex = -1;
+  int selectedDateIndex = 0;
+  int selectedTimeIndex = 0;
   String selectedDate = "";
   String selectedTime = "";
   String user_phone = "";
@@ -56,7 +57,16 @@ class _doc_profileState extends State<doc_profile> {
         })
       );
       if(response.statusCode==201){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>booking_history_page()));
+        showDialog(context: context, builder: (context)=>AlertDialog(
+          title: Text("Booking Successfully",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 20),),
+          content: Text("Your booking this doctor is successfull"),
+          actions: [
+            TextButton(onPressed: (){
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
+            }, child: Text("Ok",style: TextStyle(color: Color(0xff1f8acc)),))
+          ],
+        ));
+
       }
       else{
       //   print('your booking failed:${response.body}');
@@ -100,7 +110,7 @@ class _doc_profileState extends State<doc_profile> {
       // DateTime nextDay = now.add(Duration(days: index + 1));
       DateTime nextDay = now.add(Duration(days: index));
       return {
-        'date': DateFormat('dd MMM').format(nextDay),
+        'date': DateFormat('MMM dd').format(nextDay),
         'year': DateFormat('yyyy').format(nextDay),
         'day': DateFormat('EE').format(nextDay), // Get full day name
       };
@@ -115,6 +125,7 @@ class _doc_profileState extends State<doc_profile> {
     next7Days = getNext7Days();
   }
 
+  // request for retrieve the partcular json in list to send a one data
   Future<void> _showdoctor() async {
     final url = Uri.parse(
         "http://$ip:8000/doctor_details/doctor_editdetails/$pk/"); // Specific doctor's details
@@ -245,7 +256,8 @@ class _doc_profileState extends State<doc_profile> {
                                                 selectedDateIndex =
                                                     index; // Update selected date index
                                                 selectedDate =
-                                                    "${next7Days[selectedDateIndex]['day']} - ${next7Days[selectedDateIndex]['date']}";
+                                                    "${next7Days[index]['year']}-${next7Days[selectedDateIndex]['date']}-${next7Days[selectedDateIndex]['day']}";
+                                                selectedDate = selectedDate.replaceFirst(" ", "-");
                                                 print("$selectedDate");
                                               });
                                             },
