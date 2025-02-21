@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 
 import '../../Backend_doctor_details.dart';
 
-
 class all_doctor extends StatefulWidget {
   const all_doctor({super.key});
 
@@ -80,8 +79,7 @@ class _doctor_idState extends State<doctor_id> {
 
   //  request for retrieve the all the json using get
   Future<void> _showdoctor1() async {
-    final url = Uri.parse(
-        "http://$ip:8000/doctor_details/doctor_addetails/");
+    final url = Uri.parse("http://$ip:8000/doctor_details/doctor_addetails/");
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
@@ -118,142 +116,164 @@ class _doctor_idState extends State<doctor_id> {
             var doctor = doctor_detail[index];
             return doctor.id != null
                 ? Padding(
-                    padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 15),
-                    child: Container(
-                      clipBehavior: Clip.hardEdge,
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade50,
-                        borderRadius: BorderRadius.circular(40),
+                    padding: EdgeInsets.only(left: 13.0, right: 13, bottom: 15),
+                    child: Card(
+                      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-
-                      height: 210,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Image.network(
-                            scale: 5,
-                            doctor.doctorImage != null
-                                ? "http://$ip:8000${doctor.doctorImage}"
-                                : "https://cdn-icons-png.flaticon.com/128/10701/10701484.png",
-                            // Fallback image if null
-                            fit: BoxFit.cover,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                      clipBehavior: Clip.hardEdge,
+                      shadowColor: Colors.grey,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          // borderRadius: BorderRadius.circular(40),
+                        ),
+                        height: 190,
+                        child: Padding(
+                          padding:
+                              EdgeInsets.only(left: 10.0, top: 15, bottom: 15),
+                          child: Center(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "${doctor.doctorName ?? "unknown"}",
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 20),
-                                    ),
-                                    Padding(
-                                      padding:
-                                      const EdgeInsets.only(left: 48.0),
-                                      child: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            heart = !heart;
-                                          });
-                                        },
-                                        icon: Icon(
-                                          heart
-                                              ? FontAwesomeIcons.solidHeart
-                                              : FontAwesomeIcons.heart,
-                                          color: heart
-                                              ? Colors.red
-                                              : Colors.grey,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                CircleAvatar(
+                                  radius: 40,
+                                  backgroundImage: NetworkImage(
+                                    // scale: 10,
+                                    doctor.doctorImage != null
+                                        ? "http://$ip:8000${doctor.doctorImage}"
+                                        : "no data ",
+                                  ),
                                 ),
                                 Padding(
-                                  padding:  EdgeInsets.only(bottom: 5.0),
-                                  child: Text(
-                                    doctor.specialty ?? "No specility",
-                                    style: TextStyle(
-
-                                      fontSize: 14,
-                                    ),
-
-                                  ),
-                                ),Padding(
-                                  padding:  EdgeInsets.only(bottom: 5.0),
-                                  child: Text(
-                                    "${doctor.service ?? "No service"} years of exp",
-                                    style: TextStyle(
-
-                                      fontSize: 14,
-                                    ),
-
-                                  ),
-                                ),Padding(
-                                  padding:  EdgeInsets.only(bottom: 5.0),
-                                  child: Text(
-                                    doctor.language ?? "english",
-                                    style: TextStyle(
-
-                                      fontSize: 14,
-                                    ),
-
-                                  ),
-                                ),Padding(
-                                  padding:  EdgeInsets.only(bottom: 5.0),
-                                  child: Text(
-                                    doctor.doctorLocation ?? "No specility",
-                                    style: TextStyle(
-
-                                      fontSize: 14,
-                                    ),
-
-                                  ),
-                                ),
-
-                                Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    OutlinedButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      doc_profile(
-                                                        data:
-                                                        "${doctor.id}",
-                                                      )));
-                                        },
-                                        child: Text("Book")),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 38.0),
-                                      child: Row(
+                                  padding: EdgeInsets.only(left: 18.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Icon(
-                                            Icons.star,
-                                            color: Colors.yellow,
+                                          Text(
+                                            "${doctor.doctorName ?? "unknown"}",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 20),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 28.0),
+                                            child: IconButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  heart = !heart;
+                                                });
+                                              },
+                                              icon: Icon(
+                                                heart
+                                                    ? FontAwesomeIcons.solidHeart
+                                                    : FontAwesomeIcons.heart,
+                                                color: heart
+                                                    ? Colors.red
+                                                    : Colors.grey,
+                                              ),
+                                            ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                    Container(
-                                        width: 60,
-                                        child:
-                                        Text("${doctor.regNo ?? 0}")),
-                                  ],
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 5.0),
+                                        child: Text(
+                                          doctor.specialty ?? "No specility",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 5.0),
+                                        child: Text(
+                                          "${doctor.service ?? "No service"} years of exp",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                      // Padding(
+                                      //   padding: EdgeInsets.only(bottom: 5.0),
+                                      //   child: Text(
+                                      //     doctor.language ?? "english",
+                                      //     style: TextStyle(
+                                      //       fontSize: 14,
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      // Padding(
+                                      //   padding: EdgeInsets.only(bottom: 5.0),
+                                      //   child: Text(
+                                      //     doctor.doctorLocation ??
+                                      //         "No specility",
+                                      //     style: TextStyle(
+                                      //       fontSize: 14,
+                                      //     ),
+                                      //   ),
+                                      // ),
+
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            OutlinedButton(
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              doc_profile(
+                                                                data:
+                                                                    "${doctor.id}",
+                                                              )));
+                                                },
+                                                style: OutlinedButton.styleFrom(
+                                                    backgroundColor:
+                                                        Colors.blueAccent,
+                                                    shadowColor: Colors.grey),
+                                                child: Text(
+                                                  "Book",
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                )),
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 38.0),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.star,
+                                                    color: Colors.yellow,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Container(
+                                                width: 60,
+                                                child:
+                                                    Text("${doctor.regNo ?? 0}")),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 )
                               ],
                             ),
-                          )
-                        ],
+                          ),
+                        ),
                       ),
                     ),
                   )
