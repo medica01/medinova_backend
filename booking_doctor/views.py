@@ -18,23 +18,64 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
+from datetime import datetime
+
 
 # Create your views here.
 
-class create_booking_doctor(APIView):
-    permission_classes =[AllowAny]
+# class create_booking_doctor(APIView):
+#     permission_classes =[AllowAny]
 
-    def post(self,request):
-        doctor_id = request.data.get("id")
-        phone_number = request.data.get("phone_number")
-        booking_date = request.data.get("booking_date")
-        booking_time = request.data.get("booking_time")
+#     def post(self,request):
+#         doctor_id = request.data.get("id")
+#         phone_number = request.data.get("phone_number")
+#         booking_date = request.data.get("booking_date")
+#         booking_time = request.data.get("booking_time")
 
-        # get the doctor details
-        doctor = get_object_or_404(doctor_details,id=doctor_id)
+#         # get the doctor details
+#         doctor = get_object_or_404(doctor_details,id=doctor_id)
         
 
-        booking_doctorr= booking_doctor.objects.create(
+#         booking_doctorr= booking_doctor.objects.create(
+#             doctor=doctor,
+#             phone_number=phone_number,
+#             doctor_name=doctor.doctor_name,
+#             specialty=doctor.specialty,
+#             service=doctor.service,
+#             language=doctor.language,
+#             doctor_image=doctor.doctor_image,
+#             qualification=doctor.qualification,
+#             bio=doctor.bio,
+#             reg_no=doctor.reg_no,
+#             doctor_location=doctor.doctor_location,
+#             booking_date = datetime.strptime(booking_date, "%Y-%b-%d-%a").strftime("%Y-%b-%d-%a"),
+#             booking_time = datetime.strptime(booking_time, "%H:%M %p").strftime("%I:%M %p")
+#         )
+
+#         serializer = booking_doctorSerializer(booking_doctorr)
+#         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class create_booking_doctor(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        doctor_id = request.data.get("id")
+        phone_number = request.data.get("phone_number")
+        booking_date = request.data.get("booking_date")  # Expecting: "2025-Feb-21-Fri"
+        booking_time = request.data.get("booking_time")  # Expecting: "5:00 AM"
+
+        # Get the doctor details
+        doctor = get_object_or_404(doctor_details, id=doctor_id)
+
+        # Parse and store date as YYYY-MM-DD
+        parsed_booking_date = datetime.strptime(booking_date, "%Y-%b-%d-%a").date()
+
+        # Parse and store time as time object
+        parsed_booking_time = datetime.strptime(booking_time, "%I:%M %p").time()
+
+        # Create booking
+        booking_doctorr = booking_doctor.objects.create(
             doctor=doctor,
             phone_number=phone_number,
             doctor_name=doctor.doctor_name,
@@ -46,13 +87,15 @@ class create_booking_doctor(APIView):
             bio=doctor.bio,
             reg_no=doctor.reg_no,
             doctor_location=doctor.doctor_location,
-            booking_date=datetime.strptime(booking_date, "%Y-%m-%d").date(),
-            booking_time=datetime.strptime(booking_time, "%H:%M").time()
+            booking_date=parsed_booking_date,  # Stored as YYYY-MM-DD
+            booking_time=parsed_booking_time  # Stored as time object
         )
 
         serializer = booking_doctorSerializer(booking_doctorr)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
+
+
+
 class spec_user_booking(APIView):
     permission_classes = [AllowAny]
 
