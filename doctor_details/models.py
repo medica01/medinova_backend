@@ -3,6 +3,8 @@ from django.db import models
 # Create your models here.
 class doctor_details(models.Model):
     doctor_name = models.CharField(max_length=100,null=True,blank=True)
+    doctor_phone_no = models.BigIntegerField(null=True,unique=True)
+    doctor_email=models.EmailField(null=True,blank=True)
     specialty=models.CharField(max_length=100,null=True,blank=True)
     service=models.IntegerField(null=True,blank=True)
     language=models.CharField(max_length=100,null=True,blank=True)
@@ -15,4 +17,4 @@ class doctor_details(models.Model):
 
 
 def __int__(self):
-        return self.reg_no
+        return self.doctor_phone_no

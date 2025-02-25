@@ -54,5 +54,40 @@ class doctor_editdetails(APIView):
         doctor=get_object_or_404(doctor_details,pk=pk)
         doctor.delete()
         return Response({'success': 'deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class doctor_editdetails_phonenumber(APIView):
+    def get(self,request,doc_phone_no):
+        doctor=get_object_or_404(doctor_details,doctor_phone_no=doc_phone_no)
+        serializer=doctor_detailsSerializers(doctor)
+        return Response(serializer.data)
     
+    def put(self,request,doc_phone_no):
+        doctor=get_object_or_404(doctor_details,doctor_phone_no=doc_phone_no)
+        serializer=doctor_detailsSerializers(doctor,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self,request,doc_phone_no):
+        doctor=get_object_or_404(doctor_details,doctor_phone_no=doc_phone_no)
+        doctor.delete()
+        return Response({'success': 'deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+    
+
+class doctor_check_phoneno(APIView):
+    permission_classes =[AllowAny]
+
+    def post(self,request):
+        doc_phone_number = request.data.get('doctor_phone_no')
+
+        if not doc_phone_number:
+            return Response({'error':'phone number must required'},status=status.HTTP_400_BAD_REQUEST)
         
+        check_doc_number = doctor_details.objects.filter(doctor_phone_no=doc_phone_number).first()
+
+        if check_doc_number:
+            return Response({'message':'doctor phone is exist','status':'old_user'},status=status.HTTP_200_OK)
+        else:
+            return Response({'message':'no doctor found','status':'new_user'},status=status.HTTP_404_NOT_FOUND)
