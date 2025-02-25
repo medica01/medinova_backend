@@ -1,7 +1,7 @@
-
 class doctor_details {
   int? id;
   String? doctorName;
+  int? doctorPhoneNo;
   String? specialty;
   int? service;
   String? language;
@@ -10,10 +10,12 @@ class doctor_details {
   String? bio;
   int? regNo;
   String? doctorLocation;
+  bool? like;
 
   doctor_details(
       {this.id,
         this.doctorName,
+        this.doctorPhoneNo,
         this.specialty,
         this.service,
         this.language,
@@ -21,11 +23,13 @@ class doctor_details {
         this.qualification,
         this.bio,
         this.regNo,
-        this.doctorLocation});
+        this.doctorLocation,
+        this.like});
 
   doctor_details.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     doctorName = json['doctor_name'];
+    doctorPhoneNo = json['doctor_phone_no'];
     specialty = json['specialty'];
     service = json['service'];
     language = json['language'];
@@ -34,12 +38,14 @@ class doctor_details {
     bio = json['bio'];
     regNo = json['reg_no'];
     doctorLocation = json['doctor_location'];
+    like = json['like'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['doctor_name'] = this.doctorName;
+    data['doctor_phone_no'] = this.doctorPhoneNo;
     data['specialty'] = this.specialty;
     data['service'] = this.service;
     data['language'] = this.language;
@@ -48,6 +54,8 @@ class doctor_details {
     data['bio'] = this.bio;
     data['reg_no'] = this.regNo;
     data['doctor_location'] = this.doctorLocation;
+    data['like'] = this.like;
     return data;
   }
 }
+

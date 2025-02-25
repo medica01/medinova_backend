@@ -1,35 +1,29 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:health_hub/main.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sim_card_info/sim_card_info.dart';
 import 'package:sim_card_info/sim_info.dart';
 import 'package:http/http.dart' as http;
-
+import '../../Doctor app/doctor_homepage.dart';
 import '../../choose_user_or_doc.dart';
-import '../../user app/pages/home.dart';
+import '../../main.dart';
 
 
-
-class Phone_Enter extends StatefulWidget {
-  const Phone_Enter({super.key});
+class doc_otp extends StatefulWidget {
+  const doc_otp({super.key});
 
   @override
-  State<Phone_Enter> createState() => _Phone_EnterState();
+  State<doc_otp> createState() => _doc_otpState();
 }
 
-class _Phone_EnterState extends State<Phone_Enter> {
-  bool _login = false;
+class _doc_otpState extends State<doc_otp> {
+  bool _doc_login = false;
 
   @override
   void initState() {
@@ -39,23 +33,25 @@ class _Phone_EnterState extends State<Phone_Enter> {
   }
   Future<void> _checklogin() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool login = prefs.getBool('login') ?? false;
+    bool login = prefs.getBool('doc_login') ?? false;
     setState(() {
-      _login = login ?? false;
+      _doc_login = login ?? false;
     });
   }
   @override
   Widget build(BuildContext context) {
-    return _login ?HomePage():PhoneEntryPage();
+    return _doc_login ?HomePage():doc_otp_verfiy();
   }
 }
 
-class PhoneEntryPage extends StatefulWidget {
+class doc_otp_verfiy extends StatefulWidget {
+  const doc_otp_verfiy({super.key});
+
   @override
-  _PhoneEntryPageState createState() => _PhoneEntryPageState();
+  State<doc_otp_verfiy> createState() => _doc_otp_verfiyState();
 }
 
-class _PhoneEntryPageState extends State<PhoneEntryPage> {
+class _doc_otp_verfiyState extends State<doc_otp_verfiy> {
   final TextEditingController _phoneController = TextEditingController();
   final _form = GlobalKey<FormState>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -121,128 +117,6 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
     }
   }
 
-  // both android and web google login
-  Future<User?> signInWithGoogle() async {
-    try {
-      if (kIsWeb) {
-        GoogleAuthProvider googleProvider = GoogleAuthProvider();
-        googleProvider.setCustomParameters({'prompt': 'select_account'});
-
-        // Web-specific sign-in method
-        UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithPopup(googleProvider);
-
-        await saveUserData(userCredential.user);
-
-        return userCredential.user;
-
-
-      } else {
-        // Android-specific sign-in method
-        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-        final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
-
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth?.accessToken,
-          idToken: googleAuth?.idToken,
-        );
-
-        final userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
-
-        // Save user data to Firestore
-        await saveUserData(userCredential.user);
-
-        return userCredential.user;
-      }
-    } catch (e) {
-      print("Google Sign-In Error: $e");
-      return null;
-    }
-  }
-
-  // Future<void> signOut() async {
-  //   await _auth.signOut();
-  //   if (!kIsWeb) {
-  //     await GoogleSignIn().signOut(); // Only needed for mobile
-  //   }
-  // }
-
-
-
-  // google login for web
-  // Future<User?> signInWithGoogle() async {
-  //   try {
-  //     GoogleAuthProvider googleProvider = GoogleAuthProvider();
-  //     googleProvider.setCustomParameters({'prompt': 'select_account'});
-  //
-  //     // Web-specific sign-in method
-  //     UserCredential userCredential =
-  //     await FirebaseAuth.instance.signInWithPopup(googleProvider);
-  //
-  //     User? user = userCredential.user;
-  //
-  //     if (user != null) {
-  //       print("User Email: ${user.email}");
-  //     }
-  //
-  //     return user;
-  //   } catch (e) {
-  //     print("Google Sign-In Error: $e");
-  //     return null;
-  //   }
-  // }
-
-
-  // Future<User?> signInWithGoogle() async {
-  //   try {
-  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-  //     final GoogleSignInAuthentication? googleAuth =
-  //         await googleUser?.authentication;
-  //
-  //     final credential = GoogleAuthProvider.credential(
-  //       accessToken: googleAuth?.accessToken,
-  //       idToken: googleAuth?.idToken,
-  //     );
-  //
-  //     final userCredential =
-  //         await FirebaseAuth.instance.signInWithCredential(credential);
-  //
-  //     // Save user data to Firestore
-  //     await saveUserData(userCredential.user);
-  //
-  //     return userCredential.user;
-  //   } catch (e) {
-  //     print('Exception -> $e');
-  //     return null;
-  //   }
-  // }
-
-  Future<void> saveUserData(User? user) async {
-    if (user != null) {
-      SharedPreferences pref = await SharedPreferences.getInstance();
-      await pref.setBool("login", true);
-      await pref.setString("uid", user.uid ?? "");
-      await pref.setString("name", user.displayName ?? "");
-      await pref.setString("email", user.email ?? "");
-      await pref.setString("photourl", user.photoURL ?? "");
-
-      FirebaseFirestore firestore = FirebaseFirestore.instance;
-      Map<String, dynamic> userData = {
-        'uid': user.uid,
-        'name': user.displayName,
-        'email': user.email,
-        'photoUrl': user.photoURL,
-        'lastLogin': DateTime.now(),
-      };
-
-      await firestore
-          .collection('users')
-          .doc(user.uid)
-          .set(userData, SetOptions(merge: true));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -336,7 +210,7 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content:
-                                    Text('Verification failed: ${e.message}'),
+                                Text('Verification failed: ${e.message}'),
                               ),
                             );
                           },
@@ -344,7 +218,7 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => OtpPage(
+                                builder: (context) => DocOtpPage(
                                   verificationId: verificationId,
                                   data: '$phoneNumber',
                                 ),
@@ -368,13 +242,13 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                     padding: EdgeInsets.only(top: 20.0),
                     child: GestureDetector(
                       onTap: () async {
-                        User? user = await signInWithGoogle();
-                        if (user != null) {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomePage()));
-                        }
+                        // User? user = await signInWithGoogle();
+                        // if (user != null) {
+                        //   Navigator.pushReplacement(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //           builder: (context) => HomePage()));
+                        // }
                       },
                       child: Container(
                         height: 51,
@@ -410,41 +284,41 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
   }
 }
 
-class OtpPage extends StatefulWidget {
+class DocOtpPage extends StatefulWidget {
   final String verificationId;
   final String data;
 
-  OtpPage({required this.verificationId, required this.data});
+  const DocOtpPage({super.key, required this.verificationId, required this.data});
 
   @override
-  _OtpPageState createState() => _OtpPageState();
+  State<DocOtpPage> createState() => _DocOtpPageState();
 }
 
-class _OtpPageState extends State<OtpPage> {
+class _DocOtpPageState extends State<DocOtpPage> {
   final TextEditingController _otpController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<void> _chech_phone_number() async {
+  Future<void> _doc_chech_phone_number() async {
     String check_number = widget.data;
     try {
       final response = await http.post(
           Uri.parse(
-            "http://$ip:8000/user_profile/check_phone_number/",
+            "http://$ip:8000/doctor_details/doc_check_phone/",
           ),
           headers: {"Content-Type": "application/json"},
           body: json.encode({
-            'phone_number': check_number}
+            'doctor_phone_no': check_number}
           ));
       if (response.statusCode == 200) {
         SharedPreferences perf = await SharedPreferences.getInstance();
-        await perf.setBool('login', true);
-        await perf.setString('phone_number', check_number);
+        await perf.setBool('doc_login', true);
+        await perf.setString('doctor_phone_no', check_number);
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("user already exist")));
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomePage()));
       } else if (response.statusCode == 404){
-        await _user_profile();
+        await _doc_profile();
       }
     } catch (e) {
       // Handle exceptions such as network errors
@@ -454,21 +328,21 @@ class _OtpPageState extends State<OtpPage> {
     }
   }
 
-  Future<void> _user_profile() async {
+  Future<void> _doc_profile() async {
     String save_phone_number = widget.data;
 
     try {
       final response = await http.post(
-        Uri.parse('http://$ip:8000/user_profile/user_create/'),
+        Uri.parse('http://$ip:8000/doctor_details/doctor_addetails/'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          'phone_number': save_phone_number,
+          'doctor_phone_no': save_phone_number,
         }),
       );
       if (response.statusCode == 201) {
         SharedPreferences perf = await SharedPreferences.getInstance();
-        await perf.setBool('login', true);
-        await perf.setString('phone_number', save_phone_number);
+        await perf.setBool('doc_login', true);
+        await perf.setString('doctor_phone_no', save_phone_number);
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("phone number add successfully")));
         Navigator.pushReplacement(
@@ -491,7 +365,7 @@ class _OtpPageState extends State<OtpPage> {
       );
 
       await _auth.signInWithCredential(credential);
-       await _chech_phone_number();
+      await _doc_chech_phone_number();
       // Navigator.push(context, MaterialPageRoute(builder: (context)=>home_page()));
 
     } catch (e) {
@@ -500,6 +374,8 @@ class _OtpPageState extends State<OtpPage> {
       );
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -535,13 +411,13 @@ class _OtpPageState extends State<OtpPage> {
               ),
             ),
             const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () async {
-            await _verifyOtp();  // Correct call to the method
+            ElevatedButton(
+              onPressed: () async {
+                await _verifyOtp();  // Correct call to the method
 
-          },
-          child: const Text('Verify OTP'),
-        ),
+              },
+              child: const Text('Verify OTP'),
+            ),
 
           ],
         ),
@@ -550,109 +426,4 @@ class _OtpPageState extends State<OtpPage> {
   }
 }
 
-//
-// import 'package:flutter/material.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
-// import 'package:pin_code_fields/pin_code_fields.dart';
-//
-// class PhoneAuthPage extends StatefulWidget {
-//   @override
-//   _PhoneAuthPageState createState() => _PhoneAuthPageState();
-// }
-//
-// class _PhoneAuthPageState extends State<PhoneAuthPage> {
-//   final FirebaseAuth _auth = FirebaseAuth.instance;
-//   final TextEditingController phoneController = TextEditingController();
-//   final TextEditingController otpController = TextEditingController();
-//
-//   String? verificationId;
-//   bool otpSent = false;
-//
-//   Future<void> sendOTP() async {
-//     String phoneNumber = "+91${phoneController.text.trim()}"; // Change country code if needed
-//
-//     await _auth.verifyPhoneNumber(
-//       phoneNumber: phoneNumber,
-//       timeout: const Duration(seconds: 60),
-//       verificationCompleted: (PhoneAuthCredential credential) async {
-//         await _auth.signInWithCredential(credential);
-//         Fluttertoast.showToast(msg: "Auto Verification Success!");
-//         Navigator.pushReplacementNamed(context, '/home');
-//       },
-//       verificationFailed: (FirebaseAuthException e) {
-//         Fluttertoast.showToast(msg: "Verification Failed: ${e.message}");
-//       },
-//       codeSent: (String verId, int? resendToken) {
-//         setState(() {
-//           verificationId = verId;
-//           otpSent = true;
-//         });
-//         Fluttertoast.showToast(msg: "OTP Sent!");
-//       },
-//       codeAutoRetrievalTimeout: (String verId) {
-//         verificationId = verId;
-//       },
-//     );
-//   }
-//
-//   Future<void> verifyOTP() async {
-//     if (verificationId == null) {
-//       Fluttertoast.showToast(msg: "Invalid verification ID.");
-//       return;
-//     }
-//
-//     try {
-//       PhoneAuthCredential credential = PhoneAuthProvider.credential(
-//         verificationId: verificationId!,
-//         smsCode: otpController.text.trim(),
-//       );
-//
-//       await _auth.signInWithCredential(credential);
-//       Fluttertoast.showToast(msg: "OTP Verified Successfully!");
-//       Navigator.pushReplacementNamed(context, '/home');
-//     } catch (e) {
-//       Fluttertoast.showToast(msg: "Invalid OTP, try again.");
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text("Phone OTP Login")),
-//       body: Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             if (!otpSent) ...[
-//               TextField(
-//                 controller: phoneController,
-//                 keyboardType: TextInputType.phone,
-//                 decoration: InputDecoration(labelText: "Enter Phone Number"),
-//               ),
-//               SizedBox(height: 20),
-//               ElevatedButton(
-//                 onPressed: sendOTP,
-//                 child: Text("Send OTP"),
-//               ),
-//             ] else ...[
-//               PinCodeTextField(
-//                 length: 6,
-//                 controller: otpController,
-//                 appContext: context,
-//                 keyboardType: TextInputType.number,
-//                 onChanged: (value) {},
-//               ),
-//               SizedBox(height: 20),
-//               ElevatedButton(
-//                 onPressed: verifyOTP,
-//                 child: Text("Verify OTP"),
-//               ),
-//             ],
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+

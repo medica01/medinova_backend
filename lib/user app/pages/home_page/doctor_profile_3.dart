@@ -1,15 +1,18 @@
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_hub/main.dart';
-import 'package:health_hub/pages/Booking_history/booking_history_page.dart';
-import 'package:health_hub/pages/home.dart';
+
+
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:health_hub/pages/home_page/all_doctor_2.dart';
+
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../Backend_doctor_details.dart';
+import '../../../Backend_doctor_details.dart';
+import '../home.dart';
+
+
 
 class doc_profile extends StatefulWidget {
   final dynamic data;

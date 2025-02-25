@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_hub/main.dart';
-import 'package:health_hub/pages/home_page/doctor_profile_3.dart';
+import 'package:health_hub/user%20app/pages/home_page/doctor_profile_3.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
-import '../../Backend_doctor_details.dart';
+import '../../../Backend_doctor_details.dart';
+
 
 class all_doctor extends StatefulWidget {
   const all_doctor({super.key});

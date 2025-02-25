@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
-import '../../Backend_doctor_details.dart';
-import '../../main.dart';
+import '../../../Backend_doctor_details.dart';
+import '../../../main.dart';
 import 'doctor_profile_3.dart';
 
 class Specific extends StatefulWidget {

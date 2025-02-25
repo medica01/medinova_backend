@@ -2,15 +2,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:health_hub/pages/Booking_history/booking_history_page.dart';
-import 'package:health_hub/pages/Profile_page/profile_page.dart';
+
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:health_hub/pages/home_page/hoem_page.dart';
-import 'package:health_hub/pages/locaton_page/location_page.dart';
-import 'package:health_hub/pages/message_page/message_page.dart';
+
+
+
 import 'package:shared_preferences/shared_preferences.dart';
-import '../Authentication/otp_verfication/phone_otp.dart';
-import '../allfun.dart';
+
+import 'Booking_history/booking_history_page.dart';
+import 'Profile_page/profile_page.dart';
+import 'home_page/hoem_page.dart';
+import 'locaton_page/location_page.dart';
+import 'message_page/message_page.dart';
+
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:health_hub/user%20app/pages/Profile_page/personal_details_2.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,11 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:health_hub/main.dart';
-import 'package:health_hub/pages/Profile_page/personal_details_2.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import '../../Authentication/otp_verfication/phone_otp.dart';
-import '../../allfun.dart';
+
+import '../../../Authentication/otp_verfication/phone_otp.dart';
+import '../../../allfun.dart';
+
+
 
 class update_profile {
   int? id;

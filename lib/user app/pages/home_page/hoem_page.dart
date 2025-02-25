@@ -1,16 +1,18 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_hub/main.dart';
-import 'package:health_hub/pages/home_page/all_doctor_2.dart';
-import 'package:health_hub/pages/home_page/doctor_profile_3.dart';
-import 'package:health_hub/pages/home_page/specific_doctor_4.dart';
+import 'package:health_hub/user%20app/pages/home_page/all_doctor_2.dart';
+import 'package:health_hub/user%20app/pages/home_page/doctor_profile_3.dart';
+import 'package:health_hub/user%20app/pages/home_page/specific_doctor_4.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../Backend_doctor_details.dart';
-import '../../allfun.dart';
 import 'package:http/http.dart' as http;
+
+import '../../../Backend_doctor_details.dart';
+import '../../../allfun.dart';
 
 class main_home extends StatefulWidget {
   const main_home({super.key});
@@ -157,6 +159,13 @@ class _home_pageState extends State<home_page> {
           ],
         ),
         actions: [
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                CupertinoIcons.heart_fill,
+                color: Colors.red,
+                size: 30,
+              )),
           IconButton(
               onPressed: () {},
               icon: Icon(
@@ -339,7 +348,8 @@ class _home_pageState extends State<home_page> {
                             ),
                             height: 190,
                             child: Padding(
-                              padding:  EdgeInsets.only(left: 10.0,top: 15,bottom: 15),
+                              padding: EdgeInsets.only(
+                                  left: 10.0, top: 15, bottom: 15),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -355,7 +365,8 @@ class _home_pageState extends State<home_page> {
                                   Padding(
                                     padding: EdgeInsets.only(left: 18.0),
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
@@ -430,7 +441,7 @@ class _home_pageState extends State<home_page> {
                                         // ),
 
                                         Padding(
-                                          padding:  EdgeInsets.only(top: 8.0),
+                                          padding: EdgeInsets.only(top: 8.0),
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceEvenly,
@@ -440,18 +451,24 @@ class _home_pageState extends State<home_page> {
                                                     Navigator.push(
                                                         context,
                                                         MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                doc_profile(
-                                                                  data:
-                                                                      "${doctor.id}",
-                                                                )));
+                                                            builder:
+                                                                (context) =>
+                                                                    doc_profile(
+                                                                      data:
+                                                                          "${doctor.id}",
+                                                                    )));
                                                   },
-                                                  style: OutlinedButton.styleFrom(
-                                                    backgroundColor: Colors.blueAccent,
-                                                    shadowColor: Colors.grey
-                                                  ),
-
-                                                  child: Text("Book",style: TextStyle(color: Colors.white),)),
+                                                  style:
+                                                      OutlinedButton.styleFrom(
+                                                          backgroundColor:
+                                                              Colors.blueAccent,
+                                                          shadowColor:
+                                                              Colors.grey),
+                                                  child: Text(
+                                                    "Book",
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  )),
                                               Padding(
                                                 padding:
                                                     EdgeInsets.only(left: 38.0),
@@ -466,8 +483,8 @@ class _home_pageState extends State<home_page> {
                                               ),
                                               Container(
                                                   width: 60,
-                                                  child:
-                                                      Text("${doctor.regNo ?? 0}")),
+                                                  child: Text(
+                                                      "${doctor.regNo ?? 0}")),
                                             ],
                                           ),
                                         )
