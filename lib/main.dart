@@ -5,29 +5,27 @@ import 'package:flutter/material.dart';
 
 import 'Authentication/otp_verfication/phone_otp.dart';
 import 'choose_user_or_doc.dart';
-import 'firebase_option.dart';
-
-
-
-void main() async{
-  WidgetsFlutterBinding.ensureInitialized();
-  if(kIsWeb){
-  await Firebase.initializeApp(
-     options: DefaultFirebaseOptions.currentPlatform,
-  );}
-  else{
-    await Firebase.initializeApp(
-    );
-  }
-  runApp(first_screen());
-
-}
+import 'firebase_options.dart';
 // void main() async{
 //   WidgetsFlutterBinding.ensureInitialized();
+//   if(kIsWeb){
 //   await Firebase.initializeApp(
-//   );
+//      options: DefaultFirebaseOptions.currentPlatform,
+//   );}
+//   else{
+//     await Firebase.initializeApp(
+//     );
+//   }
 //   runApp(first_screen());
+//
 // }
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(first_screen());
+}
 
 String ip = "192.168.232.17";
 

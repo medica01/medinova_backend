@@ -31,6 +31,7 @@ class _doc_otpState extends State<doc_otp> {
     super.initState();
     _checklogin();
   }
+
   Future<void> _checklogin() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool login = prefs.getBool('doc_login') ?? false;
@@ -38,9 +39,10 @@ class _doc_otpState extends State<doc_otp> {
       _doc_login = login ?? false;
     });
   }
+
   @override
   Widget build(BuildContext context) {
-    return _doc_login ?HomePage():doc_otp_verfiy();
+    return _doc_login ? HomePage() : doc_otp_verfiy();
   }
 }
 
@@ -74,12 +76,16 @@ class _doc_otp_verfiyState extends State<doc_otp_verfiy> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+
     super.dispose();
   }
+  
 
   Future<void> fetchSimInfo() async {
     // Request phone permission
-    if (await Permission.phone.request().isGranted) {
+    if (await Permission.phone
+        .request()
+        .isGranted) {
       try {
         // Retrieve SIM information
         final simCardInfoPlugin = SimCardInfo();
@@ -90,7 +96,7 @@ class _doc_otp_verfiyState extends State<doc_otp_verfiy> {
           setState(() {
             phoneNumber =
                 simInfo[0].number; // Get the phone number of the first SIM card
-            phoneNumber=phoneNumber?.replaceFirst("+91", "");
+            phoneNumber = phoneNumber?.replaceFirst("+91", "");
             _phoneController.text = phoneNumber!;
             isLoading = false;
           });
@@ -120,7 +126,9 @@ class _doc_otp_verfiyState extends State<doc_otp_verfiy> {
 
   @override
   Widget build(BuildContext context) {
-    final screen = MediaQuery.of(context).size;
+    final screen = MediaQuery
+        .of(context)
+        .size;
     return Scaffold(
       backgroundColor: const Color(0xfff5f5f5),
       body: SingleChildScrollView(
@@ -218,10 +226,11 @@ class _doc_otp_verfiyState extends State<doc_otp_verfiy> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DocOtpPage(
-                                  verificationId: verificationId,
-                                  data: '$phoneNumber',
-                                ),
+                                builder: (context) =>
+                                    DocOtpPage(
+                                      verificationId: verificationId,
+                                      data: '$phoneNumber',
+                                    ),
                               ),
                             );
                           },
@@ -288,7 +297,8 @@ class DocOtpPage extends StatefulWidget {
   final String verificationId;
   final String data;
 
-  const DocOtpPage({super.key, required this.verificationId, required this.data});
+  const DocOtpPage(
+      {super.key, required this.verificationId, required this.data});
 
   @override
   State<DocOtpPage> createState() => _DocOtpPageState();
@@ -297,6 +307,26 @@ class DocOtpPage extends StatefulWidget {
 class _DocOtpPageState extends State<DocOtpPage> {
   final TextEditingController _otpController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> _verifyOtp() async {
+    String otp = _otpController.text.trim();
+
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: widget.verificationId,
+        smsCode: otp,
+      );
+
+      await _auth.signInWithCredential(credential);
+      await _doc_chech_phone_number();
+      // Navigator.push(context, MaterialPageRoute(builder: (context)=>home_page()));
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Invalid OTP')),
+      );
+    }
+  }
 
   Future<void> _doc_chech_phone_number() async {
     String check_number = widget.data;
@@ -317,7 +347,7 @@ class _DocOtpPageState extends State<DocOtpPage> {
             SnackBar(content: Text("user already exist")));
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomePage()));
-      } else if (response.statusCode == 404){
+      } else if (response.statusCode == 404) {
         await _doc_profile();
       }
     } catch (e) {
@@ -355,25 +385,6 @@ class _DocOtpPageState extends State<DocOtpPage> {
     } catch (e) {}
   }
 
-  Future<void> _verifyOtp() async {
-    String otp = _otpController.text.trim();
-
-    try {
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: widget.verificationId,
-        smsCode: otp,
-      );
-
-      await _auth.signInWithCredential(credential);
-      await _doc_chech_phone_number();
-      // Navigator.push(context, MaterialPageRoute(builder: (context)=>home_page()));
-
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Invalid OTP')),
-      );
-    }
-  }
 
 
 
@@ -413,7 +424,7 @@ class _DocOtpPageState extends State<DocOtpPage> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                await _verifyOtp();  // Correct call to the method
+                await _verifyOtp(); // Correct call to the method
 
               },
               child: const Text('Verify OTP'),

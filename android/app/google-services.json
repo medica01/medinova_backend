@@ -12,7 +12,28 @@
           "package_name": "com.example.health_hub"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "680664981067-4jjgbmaqq1s95ojp3ui174880hi6s754.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.health_hub",
+            "certificate_hash": "5987991c3707ebbae746510ee1fe90dfaab8a109"
+          }
+        },
+        {
+          "client_id": "680664981067-j00uo0h0bcjro0ascqpp0jdlp157ga5h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.health_hub",
+            "certificate_hash": "fc1e5ba4279aa764df39b0f99ec09780822ef380"
+          }
+        },
+        {
+          "client_id": "680664981067-48d4g2323u5kop7cnulmra0mf3ms5kko.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAhUinOmS7OAKU0vwtnQJuq5AyTjy_ZqhY"
@@ -20,7 +41,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "680664981067-48d4g2323u5kop7cnulmra0mf3ms5kko.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "680664981067-bd3ka8g72p6mmrl2gb35emgdlpj4hioh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.healthHub"
+              }
+            }
+          ]
         }
       }
     }
