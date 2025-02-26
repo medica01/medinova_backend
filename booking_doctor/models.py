@@ -6,6 +6,7 @@ from django.utils.timezone import now
 
 # Create your models here.
 class booking_doctor(models.Model):
+    patient = models.ForeignKey(user_profile,on_delete=models.CASCADE,null=True,blank=True)
     doctor = models.ForeignKey(doctor_details, on_delete=models.CASCADE, null=True, blank=True)
     phone_number = models.BigIntegerField()  # Store only the user's phone number
     doctor_name = models.CharField(max_length=100)
@@ -17,9 +18,20 @@ class booking_doctor(models.Model):
     bio = models.TextField(null=True, blank=True)
     reg_no = models.BigIntegerField(null=True, blank=True)
     doctor_location = models.TextField(null=True, blank=True)
+    # user field
+    first_name = models.CharField(max_length=100,null=True,blank=True)
+    last_name = models.CharField(max_length=100,null=True,blank=True)
+    gender = models.CharField(max_length=10,null=True,blank=True)
+    age = models.PositiveIntegerField(null=True,blank=True)
+    doc_phone_number=models.BigIntegerField(null=True) #store the doctor_phone number
+    email=models.EmailField(null=True,blank=True)
+    location=models.CharField(max_length=200,null=True,blank=True)
+    user_photo = models.FileField(null=True,blank=True)
+    # end
     booking_date = models.DateField()
     booking_time = models.TimeField()
     created_at = models.DateTimeField(auto_created=True, default=now)
 
     def __int__ (self):
         return self.phone_number
+    
