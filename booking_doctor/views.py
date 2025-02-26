@@ -62,7 +62,7 @@ class create_booking_doctor_user(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        patient_id = request.data.get("id")
+        
         doctor_id = request.data.get("id")
         phone_number = request.data.get("phone_number")
         booking_date = request.data.get("booking_date")  # Expecting: "2025-Feb-21-Fri"
@@ -70,7 +70,7 @@ class create_booking_doctor_user(APIView):
 
         # Get the doctor details
         doctor = get_object_or_404(doctor_details, id=doctor_id)
-        user = get_object_or_404(user_profile,id=patient_id)
+        user = get_object_or_404(user_profile,phone_number=phone_number)
 
         # Parse and store date as YYYY-MM-DD
         parsed_booking_date = datetime.strptime(booking_date, "%Y-%b-%d-%a").date()
