@@ -1,3 +1,5 @@
+import 'dart:io';
+
 class booking_doctor {
   int? id;
   String? bookingDate;
@@ -13,6 +15,15 @@ class booking_doctor {
   String? bio;
   int? regNo;
   String? doctorLocation;
+  String? firstName;
+  String? lastName;
+  String? gender;
+  int? age;
+  int? docPhoneNumber;
+  String? email;
+  String? location;
+  File? userPhoto;
+  int? patient;
   int? doctor;
 
   booking_doctor(
@@ -30,6 +41,15 @@ class booking_doctor {
         this.bio,
         this.regNo,
         this.doctorLocation,
+        this.firstName,
+        this.lastName,
+        this.gender,
+        this.age,
+        this.docPhoneNumber,
+        this.email,
+        this.location,
+        this.userPhoto,
+        this.patient,
         this.doctor});
 
   booking_doctor.fromJson(Map<String, dynamic> json) {
@@ -47,6 +67,15 @@ class booking_doctor {
     bio = json['bio'];
     regNo = json['reg_no'];
     doctorLocation = json['doctor_location'];
+    firstName = json['first_name'];
+    lastName = json['last_name'];
+    gender = json['gender'];
+    age = json['age'];
+    docPhoneNumber = json['doc_phone_number'];
+    email = json['email'];
+    location = json['location'];
+    userPhoto = json['user_photo'];
+    patient = json['patient'];
     doctor = json['doctor'];
   }
 
@@ -66,6 +95,15 @@ class booking_doctor {
     data['bio'] = this.bio;
     data['reg_no'] = this.regNo;
     data['doctor_location'] = this.doctorLocation;
+    data['first_name'] = this.firstName;
+    data['last_name'] = this.lastName;
+    data['gender'] = this.gender;
+    data['age'] = this.age;
+    data['doc_phone_number'] = this.docPhoneNumber;
+    data['email'] = this.email;
+    data['location'] = this.location;
+    data['user_photo'] = this.userPhoto;
+    data['patient'] = this.patient;
     data['doctor'] = this.doctor;
     return data;
   }

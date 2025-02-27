@@ -36,8 +36,11 @@ class _booking_history_pageState extends State<booking_history_page> {
     });
     try {
       final response = await http.get(Uri.parse(
-          "http://$ip:8000/booking_doctor/spec_user_booking/$phone_number/"));
-
+          "http://$ip:8000/booking_doctor/spec_user_booking/$phone_number/"),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      );
       if (response.statusCode == 200) {
         List<dynamic> jsonResponse = jsonDecode(response.body);
         setState(() {
@@ -48,7 +51,7 @@ class _booking_history_pageState extends State<booking_history_page> {
 
       } else {
         setState(() {
-          errormessage = "failed to load user details";
+          errormessage = "failed to load doctor details";
           isloading = false;
         });
       }
@@ -97,43 +100,53 @@ class _booking_history_pageState extends State<booking_history_page> {
             ),
           ),
         ),
-        body: Padding(
-          padding: EdgeInsets.only(top: 10.0),
-          child: ListView.builder(
-            itemCount: booking_doc.length,
-            physics: BouncingScrollPhysics(),
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              var show_doc = booking_doc[index];
-              return Card(
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: ListTile(
-                  title: Text(
-                    show_doc.doctorName ?? "No Name",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Specialty: ${show_doc.specialty ?? "Not Available"}"),
-                      Text("Service: ${show_doc.service ?? "Not Available"}"),
-                      Text("Language: ${show_doc.language ?? "Not Available"}"),
-                      Text("Qualification: ${show_doc.qualification ?? "Not Available"}"),
-                      Text("Location: ${show_doc.doctorLocation ?? "Not Available"}"),
-                      Text("Date: ${show_doc.bookingDate ?? "Not Available"}"),
-                      Text("Time: ${show_doc.bookingTime ?? "Not Available"}"),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
+        body: ListView(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: ListView.builder(
+                itemCount: booking_doc.length,
+                physics: BouncingScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  var show_doc = booking_doc[index];
+                  return Padding(
+                    padding:  EdgeInsets.only(bottom: 10.0),
+                    child: Card(
+                      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: ListTile(
+                        title: Text(
+                          show_doc.doctorName ?? "No Name",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Specialty: ${show_doc.specialty ?? "Not Available"}"),
+                            Text("Service: ${show_doc.service ?? "Not Available"}"),
+                            Text("Language: ${show_doc.language ?? "Not Available"}"),
+                            Text("Qualification: ${show_doc.qualification ?? "Not Available"}"),
+                            Text("Location: ${show_doc.doctorLocation ?? "Not Available"}"),
+                            Text("Date: ${show_doc.bookingDate ?? "Not Available"}"),
+                            Text("Time: ${show_doc.bookingTime ?? "Not Available"}"),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
 
+                },
+              ),
+            ),
+            Container(
+              height: 100,
+            )
+          ],
+        ),
       ),
     );
   }

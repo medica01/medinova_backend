@@ -50,7 +50,7 @@ class _doc_profileState extends State<doc_profile> {
 
     try {
       final response = await http.post(
-        Uri.parse("http://$ip:8000/booking_doctor/create_book_doc/"),
+        Uri.parse("http://$ip:8000/booking_doctor/create_booking_doctor_user/"),
         headers: {"Content-Type":"application/json"},
         body: jsonEncode({
           'id': doc_id,

@@ -52,11 +52,11 @@ class _HomePageState extends State<HomePage>
                 controller: _tabController,
                 children: [
                   // Replace with your respective pages
-                  doc_book_pati(),
                   doc_location(),
-                  doc_home(),
                   doc_message(),
-                  doc_profiles()
+                  doc_home(),
+                  doc_profiles(),
+                  doc_book_pati(),
                 ],
               ),
             ),
