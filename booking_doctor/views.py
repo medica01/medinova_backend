@@ -131,3 +131,60 @@ class spec_doctor_booked(APIView):
         serializer = booking_doctorSerializer(booked_doc,many=True)
 
         return Response(serializer.data)
+    
+
+
+################################################################################# Favorite doctor ####################################################################
+
+
+class create_favorite_doc(APIView):
+    permission_classes=[AllowAny]
+
+    def post(self,request):
+
+        phone_number = request.data.get("phone_number")
+        like = request.data.get("like")
+        fav_doc_id=request.data.get("id")
+
+        doctor = get_object_or_404(doctor_details,id=fav_doc_id)
+        
+        existing_fav_doc = favorite_doctor.objects.filter(phone_number=phone_number, doctor=doctor).first()
+
+        if existing_fav_doc:
+            return Response({"message": "Doctor is already marked as favorite."}, status=status.HTTP_200_OK)
+
+
+        favorite_doctor_user = favorite_doctor.objects.create(
+            doctor=doctor,
+            like=like,
+            phone_number=phone_number,
+            doctor_name=doctor.doctor_name,
+            doctor_phone_no = doctor.doctor_phone_no,
+            doctor_email= doctor.doctor_email,
+            specialty=doctor.specialty,
+            service=doctor.service,
+            language=doctor.language,
+            doctor_image=doctor.doctor_image,
+            qualification=doctor.qualification,
+            bio=doctor.bio,
+            reg_no=doctor.reg_no,
+            doctor_location=doctor.doctor_location
+        )
+
+
+        serializer = favorite_doctorSerializer(favorite_doctor_user)
+        return Response(serializer.data,status=status.HTTP_201_CREATED)
+        
+    
+
+class get_fav_doc(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, phone_number):
+        fav_docs = favorite_doctor.objects.filter(phone_number=phone_number)
+
+        if not fav_docs.exists():
+            return Response({"message": "No favorite doctors found for this user."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = favorite_doctorSerializer(fav_docs, many=True)  # Use many=True
+        return Response(serializer.data, status=status.HTTP_200_OK)

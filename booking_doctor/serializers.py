@@ -16,3 +16,9 @@ class booking_doctorSerializer(serializers.ModelSerializer):
     def get_booking_time(self, obj):
         # Format time as 5:00 AM
         return obj.booking_time.strftime("%I:%M %p")
+    
+
+class favorite_doctorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=favorite_doctor
+        fields="__all__"
