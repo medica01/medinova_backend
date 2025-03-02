@@ -146,29 +146,28 @@ class create_favorite_doc(APIView):
         like = request.data.get("like")
         fav_doc_id=request.data.get("id")
 
-        doctor = get_object_or_404(doctor_details,id=fav_doc_id)
+        doctorr = get_object_or_404(doctor_details,id=fav_doc_id)
         
-        existing_fav_doc = favorite_doctor.objects.filter(phone_number=phone_number, doctor=doctor).first()
+        existing_fav_doc = favorite_doctor.objects.filter(phone_number=phone_number, doctor=doctorr).first()
 
         if existing_fav_doc:
             return Response({"message": "Doctor is already marked as favorite."}, status=status.HTTP_200_OK)
 
 
         favorite_doctor_user = favorite_doctor.objects.create(
-            doctor=doctor,
+            doctor=doctorr,
             like=like,
             phone_number=phone_number,
-            doctor_name=doctor.doctor_name,
-            doctor_phone_no = doctor.doctor_phone_no,
-            doctor_email= doctor.doctor_email,
-            specialty=doctor.specialty,
-            service=doctor.service,
-            language=doctor.language,
-            doctor_image=doctor.doctor_image,
-            qualification=doctor.qualification,
-            bio=doctor.bio,
-            reg_no=doctor.reg_no,
-            doctor_location=doctor.doctor_location
+            doctor_name=doctorr.doctor_name,
+            doctor_phone_no = doctorr.doctor_phone_no,
+            specialty=doctorr.specialty,
+            service=doctorr.service,
+            language=doctorr.language,
+            doctor_image=doctorr.doctor_image,
+            qualification=doctorr.qualification,
+            bio=doctorr.bio,
+            reg_no=doctorr.reg_no,
+            doctor_location=doctorr.doctor_location
         )
 
 
@@ -188,3 +187,19 @@ class get_fav_doc(APIView):
 
         serializer = favorite_doctorSerializer(fav_docs, many=True)  # Use many=True
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class delete_fav_doc(APIView):
+    def delete(self, request):
+        phone_number = request.data.get("phone_number")  # Get phone number from query params
+        doctor_id = request.data.get("doctor_id")  # Get doctor_id from query params
+        
+        if not phone_number or not doctor_id:
+            return Response({"error": "Phone number and doctor ID are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Find and delete the specific doctor for the given phone number
+        favorite = get_object_or_404(favorite_doctor, phone_number=phone_number, doctor_id=doctor_id)
+        favorite.delete()
+
+        return Response({"message": f"Doctor {doctor_id} removed from favorites for {phone_number}"}, status=status.HTTP_200_OK)
+

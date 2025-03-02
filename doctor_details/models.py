@@ -13,7 +13,7 @@ class doctor_details(models.Model):
     bio=models.TextField(null=True,blank=True)
     reg_no=models.BigIntegerField(null=True,blank=True)
     doctor_location=models.TextField(null=True,blank=True)
-    like = models.BooleanField(null=True,blank=True)
+    like = models.BooleanField(null=True)
 
 
 def __int__(self):
