@@ -94,3 +94,32 @@ AppBar customAppBar(String title, {bool centertitle = false}) {
   );
 }
 
+// doctor details collect in this text form field
+Widget doc_form_field (String text,TextEditingController tec) {
+  return Padding(
+    padding:  EdgeInsets.only(top: 8.0,bottom: 8,left: 13,right: 13),
+    child: TextFormField(
+      controller: tec,
+      autofocus: true,
+      clipBehavior: Clip.hardEdge,
+      cursorColor: Color(0xff1f8acc),
+      style: TextStyle(color: Color(0xff1f8acc)),
+      decoration: InputDecoration(
+          focusColor: Colors.black,
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.black, width: 2.0), // Focused border color
+          ),
+          contentPadding: EdgeInsets.only(left: 20),
+          hintText: text,
+          hintStyle: TextStyle(color: Color(0xff1f8acc)),
+          border: OutlineInputBorder(
+            borderSide: BorderSide.merge(
+              BorderSide(color: Colors.black),
+              BorderSide.none,
+            ),
+          )),
+    ),
+  );
+}
+

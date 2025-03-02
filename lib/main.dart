@@ -50,7 +50,7 @@ class _Splash_screenState extends State<Splash_screen> {
       Duration(seconds: 3),
           () =>
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => choose_use_doc())),
+              context, MaterialPageRoute(builder: (context) => Phone_Enter())),
     );
   }
 

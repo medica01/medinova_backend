@@ -46,7 +46,7 @@ class _Phone_EnterState extends State<Phone_Enter> {
   }
   @override
   Widget build(BuildContext context) {
-    return _login ?HomePage():PhoneEntryPage();
+    return _login ?HomePage():choose_use_doc();
   }
 }
 

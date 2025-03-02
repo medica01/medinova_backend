@@ -11,8 +11,9 @@ import 'package:health_hub/user%20app/pages/home_page/specific_doctor_4.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../Backend_doctor_details.dart';
+import '../../../Backend_information/Backend_doctor_details.dart';
 import '../../../allfun.dart';
+import '../../Other_feature/show_favorite_doc.dart';
 
 class main_home extends StatefulWidget {
   const main_home({super.key});
@@ -160,7 +161,9 @@ class _home_pageState extends State<home_page> {
         ),
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>show_fav_doc()));
+              },
               icon: Icon(
                 CupertinoIcons.heart_fill,
                 color: Colors.red,
