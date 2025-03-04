@@ -14,62 +14,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../Authentication/otp_verfication/phone_otp.dart';
+import '../../../Backend_information/user_details_backend.dart';
 import '../../../allfun.dart';
 
 
 
-class update_profile {
-  int? id;
-  String? createdAt;
-  String? firstName;
-  String? lastName;
-  String? gender;
-  int? age;
-  int? phoneNumber;
-  String? email;
-  String? location;
-  String? userPhoto;
 
-  update_profile(
-      {this.id,
-      this.createdAt,
-      this.firstName,
-      this.lastName,
-      this.gender,
-      this.age,
-      this.phoneNumber,
-      this.email,
-      this.location,
-      this.userPhoto});
-
-  update_profile.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    createdAt = json['created_at'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-    gender = json['gender'];
-    age = json['age'];
-    phoneNumber = json['phone_number'];
-    email = json['email'];
-    location = json['location'];
-    userPhoto = json['user_photo'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['created_at'] = this.createdAt;
-    data['first_name'] = this.firstName;
-    data['last_name'] = this.lastName;
-    data['gender'] = this.gender;
-    data['age'] = this.age;
-    data['phone_number'] = this.phoneNumber;
-    data['email'] = this.email;
-    data['location'] = this.location;
-    data['user_photo'] = this.userPhoto;
-    return data;
-  }
-}
 
 class profile_page extends StatefulWidget {
   const profile_page({super.key});

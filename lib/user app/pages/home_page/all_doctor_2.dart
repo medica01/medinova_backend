@@ -149,17 +149,26 @@ class _doctor_idState extends State<doctor_id> {
 
         ));
       } else {
-        print('update user details failed:${response.body}');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text("Update user details failed: ${response.body}")),
-        );
+        showDialog(context: context, builder: (context)=>AlertDialog(
+          title: Text("Alert",style: TextStyle(color: Colors.red,fontSize: 25,fontWeight: FontWeight.bold),),
+          content: Text("This Doctor already marked as a favorite",style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),),
+          actions: [
+            TextButton(onPressed: (){
+              Navigator.pop(context);
+            }, child: Text("OK",style: TextStyle(color: Colors.red,fontSize: 25,fontWeight: FontWeight.bold),))
+          ],
+        ));
       }
     }catch(e){
-      print('Error occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("An error occurred: $e")),
-      );
+      showDialog(context: context, builder: (context)=>AlertDialog(
+        title: Text("Alert",style: TextStyle(color: Colors.green,fontSize: 25,fontWeight: FontWeight.bold),),
+        content: Text("$e"),
+        actions: [
+          TextButton(onPressed: (){
+            Navigator.pop(context);
+          }, child: Text("ok"))
+        ],
+      ));
     }
 
 
@@ -177,7 +186,7 @@ class _doctor_idState extends State<doctor_id> {
               itemCount: doctor_detail.length,
               itemBuilder: (context, index) {
                 var doctor = doctor_detail[index];
-                return doctor.id != "null" || doctor.doctorName != "null" || doctor.language != "null" || doctor.service != "null" || doctor.specialty!="null" || doctor.language!="null" || doctor.regNo!="null" || doctor.bio!="null" || doctor.qualification!="null" ||doctor.doctorImage!="null" || doctor.doctorPhoneNo!= "null" || doctor.like!="null"
+                return doctor !=null || doctor.id != "null" || doctor.doctorName != "null" || doctor.language != "null" || doctor.service != "null" || doctor.specialty!="null" || doctor.language!="null" || doctor.regNo!="null" || doctor.bio!="null" || doctor.qualification!="null" ||doctor.doctorImage!="null" || doctor.doctorPhoneNo!= "null" || doctor.like!="null"
                     ? Padding(
                         padding: EdgeInsets.only(left: 13.0, right: 13, bottom: 15),
                         child: Card(
@@ -205,7 +214,7 @@ class _doctor_idState extends State<doctor_id> {
                                       radius: 40,
                                       backgroundImage: NetworkImage(
                                         // scale: 10,
-                                        doctor.doctorImage != null
+                                        doctor != null
                                             ? "http://$ip:8000${doctor.doctorImage}"
                                             : "no data ",
                                       ),

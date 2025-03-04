@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'Authentication/doc_otp_verfication/doc_otp_verify.dart';
 import 'Authentication/otp_verfication/phone_otp.dart';
 import 'choose_user_or_doc.dart';
 import 'firebase_options.dart';
@@ -49,8 +50,10 @@ class _Splash_screenState extends State<Splash_screen> {
     Timer(
       Duration(seconds: 3),
           () =>
+          // Navigator.pushReplacement(
+          //     context, MaterialPageRoute(builder: (context) => Phone_Enter())),
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => Phone_Enter())),
+              context, MaterialPageRoute(builder: (context) => doc_otp())),
     );
   }
 

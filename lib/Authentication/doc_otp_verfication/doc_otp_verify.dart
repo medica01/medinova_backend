@@ -29,10 +29,10 @@ class _doc_otpState extends State<doc_otp> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _checklogin();
+    _check_doc_login();
   }
 
-  Future<void> _checklogin() async {
+  Future<void> _check_doc_login() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool login = prefs.getBool('doc_login') ?? false;
     setState(() {
@@ -42,7 +42,7 @@ class _doc_otpState extends State<doc_otp> {
 
   @override
   Widget build(BuildContext context) {
-    return _doc_login ? HomePage() : doc_otp_verfiy();
+    return _doc_login ? HomePage() : choose_use_doc();
   }
 }
 

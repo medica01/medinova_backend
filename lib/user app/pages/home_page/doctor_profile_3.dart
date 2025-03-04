@@ -65,7 +65,11 @@ class _doc_profileState extends State<doc_profile> {
           content: Text("Your booking this doctor is successfull"),
           actions: [
             TextButton(onPressed: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()),
+                    (route) => false,
+              );
             }, child: Text("Ok",style: TextStyle(color: Color(0xff1f8acc)),))
           ],
         ));

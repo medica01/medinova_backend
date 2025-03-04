@@ -104,6 +104,17 @@ class _show_docState extends State<show_doc> {
       }
     } catch (e) {
       errormessage = e.toString();
+      showDialog(context: context, builder: (context)=>AlertDialog(
+        title: Text("Alert Message",style: TextStyle(
+          color: Colors.red,fontWeight: FontWeight.bold,fontSize: 25
+        ),),
+        content: Text("$errormessage",style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),),
+        actions: [
+          TextButton(onPressed: (){
+            Navigator.pop(context);
+          }, child: Text("Ok"))
+        ],
+      ));
     }
   }
 
