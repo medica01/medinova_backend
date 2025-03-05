@@ -42,7 +42,7 @@ class _doc_otpState extends State<doc_otp> {
 
   @override
   Widget build(BuildContext context) {
-    return _doc_login ? HomePage() : choose_use_doc();
+    return _doc_login ? HomePage() : doc_otp_verfiy();
   }
 }
 
@@ -363,7 +363,7 @@ class _DocOtpPageState extends State<DocOtpPage> {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("phone number add successfully")));
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+            context, MaterialPageRoute(builder: (context) => doc_details_col()));
       } else {
         print('add phone number failed:${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

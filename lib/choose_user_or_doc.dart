@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Authentication/doc_otp_verfication/doc_otp_verify.dart';
 import 'Authentication/otp_verfication/phone_otp.dart';
@@ -44,7 +45,9 @@ class _user_docState extends State<user_doc> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             GestureDetector(
-              onTap: (){
+              onTap: () async{
+                SharedPreferences pref = await SharedPreferences.getInstance();
+                await pref.setBool("doc_or_user", true);
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>doc_otp_verfiy()));
               },
               child: Container(
@@ -64,7 +67,9 @@ class _user_docState extends State<user_doc> {
             Padding(
               padding:  EdgeInsets.only(top: 15.0),
               child: GestureDetector(
-                onTap: (){
+                onTap: () async{
+                  SharedPreferences pref = await SharedPreferences.getInstance();
+                  await pref.setBool("doc_or_user", false);
                   Navigator.push(context, MaterialPageRoute(builder: (context)=>PhoneEntryPage()));
                 },
                 child: Container(

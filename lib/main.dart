@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Authentication/doc_otp_verfication/doc_otp_verify.dart';
 import 'Authentication/otp_verfication/phone_otp.dart';
@@ -44,17 +45,30 @@ class Splash_screen extends StatefulWidget {
 }
 
 class _Splash_screenState extends State<Splash_screen> {
+  bool _doc_or_user = false;
   @override
   void initState() {
     super.initState();
+    _check_doc_or_user_login();
     Timer(
       Duration(seconds: 3),
           () =>
           // Navigator.pushReplacement(
-          //     context, MaterialPageRoute(builder: (context) => Phone_Enter())),
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => doc_otp())),
+          // context, MaterialPageRoute(builder: (context) => Phone_Enter())),
+          _doc_or_user
+      ?Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => doc_otp()))
+              :Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => Phone_Enter())),
+
     );
+  }
+  Future<void> _check_doc_or_user_login() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool login = prefs.getBool('doc_or_user') ?? false;
+    setState(() {
+      _doc_or_user = login ?? false;
+    });
   }
 
   Widget build(BuildContext context) {

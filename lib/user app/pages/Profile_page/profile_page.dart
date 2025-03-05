@@ -465,6 +465,9 @@ class _SaveDetailsState extends State<SaveDetails> {
     if (emailcontroller.text.isEmpty) {
       missingfields.add("enter email id");
     }
+    if (selectedGenderIndex == -1){
+      missingfields.add("select the gender");
+    }
 
     if (missingfields.isNotEmpty) {
       showDialog(

@@ -95,15 +95,16 @@ AppBar customAppBar(String title, {bool centertitle = false}) {
 }
 
 // doctor details collect in this text form field
-Widget doc_form_field (String text,TextEditingController tec) {
+Widget doc_form_field (String text,TextEditingController tec,TextInputType type) {
   return Padding(
-    padding:  EdgeInsets.only(top: 8.0,bottom: 8,left: 13,right: 13),
+    padding:  EdgeInsets.only(top: 8.0,bottom: 14,left: 13,right: 13),
     child: TextFormField(
+      keyboardType: type,
       controller: tec,
       autofocus: true,
       clipBehavior: Clip.hardEdge,
       cursorColor: Color(0xff1f8acc),
-      style: TextStyle(color: Color(0xff1f8acc)),
+      style: TextStyle(color: Color(0xff1f8acc),fontWeight: FontWeight.bold),
       decoration: InputDecoration(
           focusColor: Colors.black,
           focusedBorder: OutlineInputBorder(
