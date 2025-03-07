@@ -7,6 +7,8 @@ class doctor_details(models.Model):
     doctor_email=models.EmailField(null=True,blank=True)
     specialty=models.CharField(max_length=100,null=True,blank=True)
     service=models.IntegerField(null=True,blank=True)
+    age = models.IntegerField(null=True,blank=True)
+    gender = models.CharField(max_length=50,null=True,blank=True)
     language=models.CharField(max_length=100,null=True,blank=True)
     doctor_image=models.FileField(max_length=100,null=True,blank=True)
     qualification=models.CharField(max_length=100,null=True,blank=True)
