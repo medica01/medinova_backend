@@ -22,3 +22,8 @@ class favorite_doctorSerializer(serializers.ModelSerializer):
     class Meta:
         model=favorite_doctor
         fields="__all__"
+
+class chat_doc_only_user_chatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = chat_doc_only_user_chat
+        fields="__all__"

@@ -20,66 +20,101 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
 from datetime import datetime
 
-class create_booking_doctor(APIView):
-    permission_classes = [AllowAny]
 
-    def post(self, request):
-        doctor_id = request.data.get("id")
-        phone_number = request.data.get("phone_number")
-        booking_date = request.data.get("booking_date")  # Expecting: "2025-Feb-21-Fri"
-        booking_time = request.data.get("booking_time")  # Expecting: "5:00 AM"
+# class create_booking_doctor_user(APIView):
+#     permission_classes = [AllowAny]
 
-        # Get the doctor details
-        doctor = get_object_or_404(doctor_details, id=doctor_id)
+#     def post(self, request):
+        
+#         doctor_id = request.data.get("id")
+#         phone_number = request.data.get("phone_number")
+#         booking_date = request.data.get("booking_date")  # Expecting: "2025-Feb-21-Fri"
+#         booking_time = request.data.get("booking_time")  # Expecting: "5:00 AM"
 
-        # Parse and store date as YYYY-MM-DD
-        parsed_booking_date = datetime.strptime(booking_date, "%Y-%b-%d-%a").date()
+#         # Get the doctor details
+#         doctor = get_object_or_404(doctor_details, id=doctor_id)
+#         user = get_object_or_404(user_profile,phone_number=phone_number)
 
-        # Parse and store time as time object
-        parsed_booking_time = datetime.strptime(booking_time, "%I:%M %p").time()
+#         
 
-        # Create booking
-        booking_doctorr = booking_doctor.objects.create(
-            doctor=doctor,
-            phone_number=phone_number,
-            doctor_name=doctor.doctor_name,
-            specialty=doctor.specialty,
-            service=doctor.service,
-            language=doctor.language,
-            doctor_image=doctor.doctor_image,
-            qualification=doctor.qualification,
-            bio=doctor.bio,
-            reg_no=doctor.reg_no,
-            doctor_location=doctor.doctor_location,
-            booking_date=parsed_booking_date,  # Stored as YYYY-MM-DD
-            booking_time=parsed_booking_time  # Stored as time object
-        )
+#        # Parse and store date as YYYY-MM-DD
+#         parsed_booking_date = datetime.strptime(booking_date, "%Y-%b-%d-%a").date()
 
-        serializer = booking_doctorSerializer(booking_doctorr)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         # Parse and store time as time object
+#         parsed_booking_time = datetime.strptime(booking_time, "%I:%M %p").time()
+
+#         # Create booking
+#         booking_doctorr = booking_doctor.objects.create(
+#             doctor=doctor,
+#             patient=user,
+#             phone_number=phone_number,
+#             doctor_name=doctor.doctor_name,
+#             specialty=doctor.specialty,
+#             service=doctor.service,
+#             language=doctor.language,
+#             doctor_image=doctor.doctor_image,
+#             qualification=doctor.qualification,
+#             bio=doctor.bio,
+#             reg_no=doctor.reg_no,
+#             doctor_location=doctor.doctor_location,
+#             first_name = user.first_name,
+#             last_name = user.last_name,
+#             gender = user.gender,
+#             age = user.age,
+#             doc_phone_number= doctor.doctor_phone_no,
+#             email=user.email,
+#             location=user.location,
+#             user_photo = user.user_photo,
+#             booking_date=parsed_booking_date,  # Stored as YYYY-MM-DD
+#             booking_time=parsed_booking_time  # Stored as time object
+#         )
+
+#         serializer = booking_doctorSerializer(booking_doctorr)
+#         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 
 class create_booking_doctor_user(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        
         doctor_id = request.data.get("id")
         phone_number = request.data.get("phone_number")
         booking_date = request.data.get("booking_date")  # Expecting: "2025-Feb-21-Fri"
         booking_time = request.data.get("booking_time")  # Expecting: "5:00 AM"
 
-        # Get the doctor details
+        # Validate required fields
+        if not all([doctor_id, phone_number, booking_date, booking_time]):
+            return Response({"message": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Get the doctor and user details
         doctor = get_object_or_404(doctor_details, id=doctor_id)
-        user = get_object_or_404(user_profile,phone_number=phone_number)
+        user = get_object_or_404(user_profile, phone_number=phone_number)
 
-        # Parse and store date as YYYY-MM-DD
-        parsed_booking_date = datetime.strptime(booking_date, "%Y-%b-%d-%a").date()
+        # Convert booking_date and booking_time safely
+        try:
+            parsed_booking_date = datetime.strptime(booking_date, "%Y-%b-%d-%a").date()
+        except ValueError:
+            return Response({"message": "Invalid booking_date format. Expected format: YYYY-MMM-DD-Day (e.g., 2025-Feb-21-Fri)"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Parse and store time as time object
-        parsed_booking_time = datetime.strptime(booking_time, "%I:%M %p").time()
+        try:
+            parsed_booking_time = datetime.strptime(booking_time, "%I:%M %p").time()
+        except ValueError:
+            return Response({"message": "Invalid booking_time format. Expected format: hh:mm AM/PM (e.g., 5:00 AM)"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if a booking exists for the same doctor, same time, and same patient
+        existing_booking = booking_doctor.objects.filter(
+            doctor=doctor,
+            patient=user,
+            booking_date=parsed_booking_date,
+            booking_time=parsed_booking_time
+        ).exists()
+
+        if existing_booking:
+            return Response({"message": "This slot is already booked."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create booking
-        booking_doctorr = booking_doctor.objects.create(
+        booking_instance = booking_doctor.objects.create(
             doctor=doctor,
             patient=user,
             phone_number=phone_number,
@@ -92,20 +127,21 @@ class create_booking_doctor_user(APIView):
             bio=doctor.bio,
             reg_no=doctor.reg_no,
             doctor_location=doctor.doctor_location,
-            first_name = user.first_name,
-            last_name = user.last_name,
-            gender = user.gender,
-            age = user.age,
-            doc_phone_number= doctor.doctor_phone_no,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            gender=user.gender,
+            age=user.age,
+            doc_phone_number=doctor.doctor_phone_no,
             email=user.email,
             location=user.location,
-            user_photo = user.user_photo,
-            booking_date=parsed_booking_date,  # Stored as YYYY-MM-DD
-            booking_time=parsed_booking_time  # Stored as time object
+            user_photo=user.user_photo,
+            booking_date=parsed_booking_date,
+            booking_time=parsed_booking_time
         )
 
-        serializer = booking_doctorSerializer(booking_doctorr)
+        serializer = booking_doctorSerializer(booking_instance)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 
 class spec_user_booking(APIView):
@@ -203,3 +239,51 @@ class delete_fav_doc(APIView):
 
         return Response({"message": f"Doctor {doctor_id} removed from favorites for {phone_number}"}, status=status.HTTP_200_OK)
 
+
+############################################################################chat_doctor_get###################################################################
+
+class create_chat_doc_only_user_chat(APIView):
+    permission_classes=[AllowAny]
+
+    def post(self,request):
+
+        phone_number = request.data.get("phone_number")
+        doctor_phone_number = request.data.get("doctor_phone_number")
+
+        patients = get_object_or_404(user_profile,phone_number=phone_number)
+
+
+        existing_chat_doc_user = chat_doc_only_user_chat.objects.filter(doctor_phone_number=doctor_phone_number, phone_number=phone_number).first()
+
+        if existing_chat_doc_user:
+            return Response({"message": "Doctor is already chat."}, status=status.HTTP_200_OK)
+
+
+
+        create_doc_user = chat_doc_only_user_chat.objects.create(
+            patient = patients,
+            doctor_phone_number= doctor_phone_number,
+            phone_number = phone_number,
+            first_name = patients.first_name,
+            last_name = patients.last_name,
+            gender = patients.gender,
+            age = patients.age,
+            email=patients.email,
+            location=patients.location,
+            user_photo = patients.user_photo
+        )
+
+        serializer = chat_doc_only_user_chatSerializer(create_doc_user)
+        return Response(serializer.data,status=status.HTTP_201_CREATED)
+    
+class get_chat_doc_only_user_chat(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self,request,doctor_phone_number):
+        doctor_phone_number = chat_doc_only_user_chat.objects.filter(doctor_phone_number=doctor_phone_number)
+
+        if not doctor_phone_number.exists():
+            return Response({"message": "No user chat found for this doctor."}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = chat_doc_only_user_chatSerializer(doctor_phone_number,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)

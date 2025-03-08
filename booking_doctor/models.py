@@ -32,9 +32,14 @@ class booking_doctor(models.Model):
     booking_time = models.TimeField()
     created_at = models.DateTimeField(auto_created=True, default=now)
 
+    class Meta:
+        unique_together=("phone_number","doc_phone_number","booking_date","booking_time")
+
     def __int__ (self):
         return self.phone_number
-        
+
+#####################################################################################favorite doctor############################################################################################
+
 class favorite_doctor(models.Model):
     doctor = models.ForeignKey(doctor_details, on_delete=models.CASCADE, null=True, blank=True)
     phone_number = models.BigIntegerField()  # User's phone number
@@ -52,3 +57,23 @@ class favorite_doctor(models.Model):
 
     class Meta:
         unique_together = ("phone_number", "doctor")  # Prevent duplicate doctor for the same user
+
+
+
+#####################################################################################chat_doctor_get###############################################################################################
+
+
+class chat_doc_only_user_chat(models.Model):
+    patient = models.ForeignKey(user_profile,on_delete=models.CASCADE,null=True,blank=True)
+    doctor_phone_number= models.BigIntegerField()
+    phone_number = models.BigIntegerField(null= True,blank=True)
+    first_name = models.CharField(max_length=100,null=True,blank=True)
+    last_name = models.CharField(max_length=100,null=True,blank=True)
+    gender = models.CharField(max_length=10,null=True,blank=True)
+    age = models.PositiveIntegerField(null=True,blank=True)
+    email=models.EmailField(null=True,blank=True)
+    location=models.CharField(max_length=200,null=True,blank=True)
+    user_photo = models.FileField(null=True,blank=True)
+
+    class Meta:
+        unique_together=("phone_number","doctor_phone_number")
