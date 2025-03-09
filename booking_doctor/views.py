@@ -105,7 +105,6 @@ class create_booking_doctor_user(APIView):
         # Check if a booking exists for the same doctor, same time, and same patient
         existing_booking = booking_doctor.objects.filter(
             doctor=doctor,
-            patient=user,
             booking_date=parsed_booking_date,
             booking_time=parsed_booking_time
         ).exists()
