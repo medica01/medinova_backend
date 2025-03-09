@@ -17,6 +17,8 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
+from django.views.generic import ListView
 
 
 
@@ -100,3 +102,24 @@ class doctor_check_phoneno(APIView):
             return Response({'message':'doctor phone is exist','status':'old_user'},status=status.HTTP_200_OK)
         else:
             return Response({'message':'no doctor found','status':'new_user'},status=status.HTTP_404_NOT_FOUND)
+
+
+######################################################################search Api##############################################
+
+class doctor_search(ListView):
+    model=doctor_details
+
+    def get(self,request,*args,**kwargs):
+        query = self.request.GET.get('q','').strip()
+
+        if query:
+            results = doctor_details.objects.filter(
+                Q(doctor_name__icontains=query)|
+                Q(gender__icontains=query)|
+                Q(specialty__icontains=query)|
+                Q(service__icontains=query)
+            )
+        else:
+            results = doctor_details.objects.all()
+
+        return JsonResponse({'result': list(results.values())})
