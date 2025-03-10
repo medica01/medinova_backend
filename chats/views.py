@@ -20,6 +20,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
 from datetime import datetime
 from django.db.models import Q
+from django.views.generic import ListView
 
 
 
@@ -69,3 +70,40 @@ class DoctorChatHistoryView(APIView):
         chats = ChatMessage.objects.filter(doc_phone_no=doc_phone)|ChatMessage.objects.filter(user_phone_no=doc_phone).order_by('timestamp')
         serializer = ChatMessageSerializer(chats, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+#####################################################################search_chat#############################################
+
+# class search_chat(ListView):
+#     model= ChatMessage
+
+#     def get(self,request,*args,**kwargs):
+#         query = self.request.GET.get('q','').strip()
+
+#         if query:
+#             results = ChatMessage.objects.filter(
+#                 Q(message__icontains=query)
+#             )
+#         else:
+#             results = ChatMessage.objects.all()
+
+#         return JsonResponse({'result':list(results.values())})
+
+class search_chat(ListView):
+    model = ChatMessage
+
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('q', '').strip()
+        user_phone_no = request.GET.get('user_phone_no', '').strip()
+        doc_phone_no = request.GET.get('doc_phone_no', '').strip()
+
+        if user_phone_no and doc_phone_no:
+            results = ChatMessage.objects.filter(
+                Q(user_phone_no=user_phone_no, doc_phone_no=doc_phone_no)
+            )
+            if query:
+                results = results.filter(Q(message__icontains=query))
+        else:
+            return JsonResponse({'error': 'User and Doctor phone numbers are required'}, status=400)
+
+        return JsonResponse({'result': list(results.values())})
