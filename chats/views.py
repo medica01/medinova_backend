@@ -74,20 +74,6 @@ class DoctorChatHistoryView(APIView):
 
 #####################################################################search_chat#############################################
 
-# class search_chat(ListView):
-#     model= ChatMessage
-
-#     def get(self,request,*args,**kwargs):
-#         query = self.request.GET.get('q','').strip()
-
-#         if query:
-#             results = ChatMessage.objects.filter(
-#                 Q(message__icontains=query)
-#             )
-#         else:
-#             results = ChatMessage.objects.all()
-
-#         return JsonResponse({'result':list(results.values())})
 
 class search_chat(ListView):
     model = ChatMessage

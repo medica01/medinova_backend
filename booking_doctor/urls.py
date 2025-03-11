@@ -10,4 +10,5 @@ urlpatterns=[
     path("delete_fav_doc/",delete_fav_doc.as_view(),name="delete_fav_doc"),
     path("create_chat_doc_only_user_chat/",create_chat_doc_only_user_chat.as_view(),name="create_chat_doc_only_user_chat"),
     path("get_chat_doc_only_user_chat/<int:doctor_phone_number>/",get_chat_doc_only_user_chat.as_view(),name="get_chat_doc_only_user_chat"),
+    path("get_chat_history/",get_chat_history.as_view(),name="get_chat_history"),
 ]

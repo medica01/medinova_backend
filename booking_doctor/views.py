@@ -19,6 +19,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
 from datetime import datetime
+from django.db.models import Q
+from django.views.generic import ListView
 
 
 # class create_booking_doctor_user(APIView):
@@ -167,6 +169,32 @@ class spec_doctor_booked(APIView):
 
         return Response(serializer.data)
     
+#################################################################################search_booking_history ##############################################################
+
+class get_chat_history(ListView):
+    model= booking_doctor
+
+    def get(self,request,*args,**kwargs):
+        query = request.GET.get('q','').strip()
+        phone_number = request.GET.get('phone_number','').strip()
+
+        if phone_number:
+            resultss = booking_doctor.objects.filter(
+                Q(phone_number=phone_number)
+            )
+            if query:
+                results=resultss.filter(
+                    Q(doctor_name__icontains=query)|
+                    Q(specialty__icontains=query)|
+                    Q(booking_date__icontains=query)
+                )
+            else:
+                return JsonResponse({'error':'user and doctor phone number are required'},status=400)
+            
+            return JsonResponse({'result': list(results.values())})
+            
+
+
 
 
 ################################################################################# Favorite doctor ####################################################################
@@ -286,3 +314,6 @@ class get_chat_doc_only_user_chat(APIView):
         
         serializer = chat_doc_only_user_chatSerializer(doctor_phone_number,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
+
+
+
