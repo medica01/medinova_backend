@@ -93,3 +93,25 @@ class search_chat(ListView):
             return JsonResponse({'error': 'User and Doctor phone numbers are required'}, status=400)
 
         return JsonResponse({'result': list(results.values())})
+    
+
+
+########################################################################online_offline################################################################
+
+class on_offline(APIView):
+    def post(self,request):
+        serializer = sstatusSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST) 
+
+
+class put_on_off(APIView):
+    def put(self,request,id):
+        on_off=get_object_or_404(sstatus,id=id)
+        serializer = sstatusSerializer(on_off,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)  # Correct status
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

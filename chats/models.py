@@ -19,3 +19,12 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return f"{self.sender_type.capitalize()} ({self.user_phone_no if self.sender_type == 'user' else self.doc_phone_no}): {self.message[:30]}"
+
+
+class sstatus(models.Model):
+    on_off = models.BooleanField(null=True,blank=True)
+    last_time = models.CharField(max_length=100,null=True,blank=True)
+
+
+    def __int__ (self):
+        return self.id
