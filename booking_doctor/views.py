@@ -194,6 +194,29 @@ class get_chat_history(ListView):
             return JsonResponse({'result': list(results.values())})
             
 
+                                                                              #doctor app booking search#
+
+class get_doc_app_booking_history(ListView):
+    model= booking_doctor
+
+    def get(self,request,*args,**kwargs):
+        query = request.GET.get('q','').strip()
+        doc_phone_number = request.GET.get('doc_phone_number','').strip()
+
+        if doc_phone_number:
+            resultss = booking_doctor.objects.filter(
+                Q(doc_phone_number=doc_phone_number)
+            )
+            if query:
+                results=resultss.filter(
+                    Q(doctor_name__icontains=query)|
+                    Q(specialty__icontains=query)|
+                    Q(booking_date__icontains=query)
+                )
+            else:
+                return JsonResponse({'error':'user and doctor phone number are required'},status=400)
+            
+            return JsonResponse({'result': list(results.values())})
 
 
 
@@ -314,6 +337,30 @@ class get_chat_doc_only_user_chat(APIView):
         
         serializer = chat_doc_only_user_chatSerializer(doctor_phone_number,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
+    
+
+class search_chat_doc_only_user_chat(ListView):
+    model=chat_doc_only_user_chat
+
+    def get(self,request,*args,**kwargs):
+        query = request.GET.get('q','').strip()
+        doctor_phone_number=request.GET.get('doctor_phone_number','').strip()
+
+        if doctor_phone_number:
+            reslutss= chat_doc_only_user_chat.objects.filter(
+                doctor_phone_number=doctor_phone_number
+            )
+
+            if query:
+                results=reslutss.filter(
+                Q(first_name__icontains=query)|
+                Q(last_name__icontains=query)
+            )
+            else:
+                resultss=chat_doc_only_user_chat.objects.all()
+
+
+            return JsonResponse({'result':list(results.values())})
 
 
 

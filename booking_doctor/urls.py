@@ -11,4 +11,6 @@ urlpatterns=[
     path("create_chat_doc_only_user_chat/",create_chat_doc_only_user_chat.as_view(),name="create_chat_doc_only_user_chat"),
     path("get_chat_doc_only_user_chat/<int:doctor_phone_number>/",get_chat_doc_only_user_chat.as_view(),name="get_chat_doc_only_user_chat"),
     path("get_chat_history/",get_chat_history.as_view(),name="get_chat_history"),
+    path("get_doc_app_booking_history/",get_doc_app_booking_history.as_view(),name="get_doc_app_booking_history"),
+    path("search_chat_doc_only_user_chat/",search_chat_doc_only_user_chat.as_view(),name='search_chat_doc_only_user_chat'),
 ]
