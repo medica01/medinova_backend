@@ -21,6 +21,7 @@ from django.shortcuts import get_object_or_404
 from datetime import datetime
 from django.db.models import Q
 from django.views.generic import ListView
+import urllib.parse
 
 
 # class create_booking_doctor_user(APIView):
@@ -169,6 +170,72 @@ class spec_doctor_booked(APIView):
 
         return Response(serializer.data)
     
+class get_specific_user_doc_date_time(APIView):
+    permission_classes=[AllowAny]
+
+    def get(self, request, phone_number, doc_phone_number, booking_date, booking_time):
+
+        try:
+            decoded_booking_time = urllib.parse.unquote(booking_time).strip()
+            formatted_booking_time = datetime.strptime(decoded_booking_time, "%I:%M %p").time()
+
+            # Parse booking_date from "2025-03-14" to a date object
+            parsed_date = datetime.strptime(booking_date, "%Y-%m-%d").date()
+
+            print(f"Querying with: phone={phone_number}, doc_phone={doc_phone_number}, date={parsed_date}, time={formatted_booking_time}")
+
+            # Query the database with raw date and time objects
+            booking = booking_doctor.objects.filter(
+                phone_number=phone_number,
+                doc_phone_number=doc_phone_number,
+                booking_date=parsed_date,
+                booking_time=formatted_booking_time
+            ).first()
+            if booking:
+                serializer = booking_doctorSerializer(booking)
+                return Response(serializer.data)
+            else:
+                return Response({"error": "Booking not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        except ValueError as e:
+            return Response({"error": f"Invalid format: {str(e)}. Use YYYY-MM-DD for date and HH:MM AM/PM for time."}, 
+                           status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+class delete_specific_user_doctor(APIView):
+    permission_classes = [AllowAny]
+
+    def delete(self, request, phone_number, doc_phone_number, booking_date, booking_time):
+        try:
+            # Decode and format booking_time from "08:00 AM" to "08:00:00"
+            decoded_booking_time = urllib.parse.unquote(booking_time).strip()
+            formatted_booking_time = datetime.strptime(decoded_booking_time, "%I:%M %p").time()
+
+            # Parse booking_date from "2025-03-14" to a date object
+            parsed_date = datetime.strptime(booking_date, "%Y-%m-%d").date()
+
+            print(f"Querying with: phone={phone_number}, doc_phone={doc_phone_number}, date={parsed_date}, time={formatted_booking_time}")
+
+            # Query the database with raw date and time objects
+            booking = booking_doctor.objects.filter(
+                phone_number=phone_number,
+                doc_phone_number=doc_phone_number,
+                booking_date=parsed_date,
+                booking_time=formatted_booking_time
+            ).first()
+
+            if booking:
+                booking.delete()
+                return Response({"message": "Booking deleted successfully"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Booking not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        except ValueError as e:
+            return Response({"error": f"Invalid format: {str(e)}. Use YYYY-MM-DD for date and HH:MM AM/PM for time."}, 
+                           status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 #################################################################################search_booking_history ##############################################################
 
 class get_chat_history(ListView):
@@ -288,6 +355,27 @@ class delete_fav_doc(APIView):
         favorite.delete()
 
         return Response({"message": f"Doctor {doctor_id} removed from favorites for {phone_number}"}, status=status.HTTP_200_OK)
+    
+class search_doc_fav(ListView):
+    model=favorite_doctor
+
+    def get(self,request,*args,**kwargs):
+        quest=request.GET.get('q','').strip()
+        phone_number=request.GET.get('phone_number','').strip()
+
+        if phone_number:
+            result = favorite_doctor.objects.filter(phone_number=phone_number)
+            if quest:
+                results = result.filter(
+                    Q(doctor_name__icontains =quest)
+                )
+            else:
+                results=favorite_doctor.objects.all()
+
+            return JsonResponse({'result':list(results.values())})
+
+        
+
 
 
 ############################################################################chat_doctor_get###################################################################

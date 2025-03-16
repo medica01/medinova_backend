@@ -11,6 +11,7 @@ class user_profile(models.Model):
     email=models.EmailField(null=True,blank=True)
     location=models.CharField(max_length=200,null=True,blank=True)
     user_photo = models.FileField(null=True,blank=True)
+    user_status = models.BooleanField(null=True,blank=True)
     created_at = models.DateTimeField(auto_created=True, default=now)
 
 

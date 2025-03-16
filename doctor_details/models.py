@@ -16,6 +16,7 @@ class doctor_details(models.Model):
     reg_no=models.BigIntegerField(null=True,blank=True)
     doctor_location=models.TextField(null=True,blank=True)
     like = models.BooleanField(null=True)
+    doc_status = models.BooleanField(null=True,blank=True)
 
 
 def __int__(self):

@@ -107,7 +107,15 @@ class on_offline(APIView):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST) 
 
 
+
 class put_on_off(APIView):
+
+    def get(self,request,id):
+        on_off = get_object_or_404(sstatus,id=id)
+        serializer = sstatusSerializer(on_off)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+
     def put(self,request,id):
         on_off=get_object_or_404(sstatus,id=id)
         serializer = sstatusSerializer(on_off,data=request.data)
