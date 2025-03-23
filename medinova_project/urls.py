@@ -26,6 +26,7 @@ urlpatterns = [
     path('user_profile/',include("user_profile.urls")),
     path('booking_doctor/',include("booking_doctor.urls")),
     path('chats/',include("chats.urls")),
+    path('medicine_pur/',include("medicine_pur.urls")),
 ]
 
 if settings.DEBUG:

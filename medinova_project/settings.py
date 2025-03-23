@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'user_profile',
     'rest_framework',
     'booking_doctor',
+    'medicine_pur',
     'chats',
     'channels',
     'corsheaders',
