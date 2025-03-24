@@ -110,6 +110,9 @@ class create_order_placed_details(APIView):
 
         pry_phone_number = request.data.get("pry_phone_number")
         product_number = request.data.get("product_number")
+        purchase_quantity = request.data.get("purchase_quantity")
+        purchase_total_price = request.data.get("purchase_total_price")
+        purchase_pay_type = request.data.get("purchase_pay_type")
 
         if not all([pry_phone_number,product_number]):
             return Response({"message":"give the input for phone number and product number"})
@@ -126,6 +129,9 @@ class create_order_placed_details(APIView):
             product_number = product_number,
             quantity = product.quantity,
             price = product.price,
+            purchase_quantity = purchase_quantity,
+            purchase_total_price = purchase_total_price,
+            purchase_pay_type = purchase_pay_type,
             cure_disases = product.cure_disases,
             product_image = product.product_image,
             about_product = product.about_product,
