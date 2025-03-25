@@ -69,6 +69,7 @@ class order_placed_details(models.Model):
     purchase_quantity = models.IntegerField(null=True,blank=True)
     purchase_total_price = models.IntegerField(null=True,blank=True)
     purchase_pay_type = models.CharField(max_length=100,null=True,blank=True)
+    order_date=models.CharField(max_length=100,null=True,blank=True)
     cure_disases = models.CharField(max_length=100,null=True,blank=True)
     product_image = models.FileField(null=True,blank=True)
     about_product = models.TextField(null=True,blank=True)

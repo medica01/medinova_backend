@@ -13,4 +13,5 @@ urlpatterns=[
     path("create_add_to_cart/",create_add_to_cart.as_view(),name="create_add_to_cart"),
     path("get_add_to_cart/<int:pry_phone_number>/",get_add_to_cart.as_view(),name="get_add_to_cart"),
     path("delete_your_cart/<int:pry_phone_number>/<int:product_number>/",delete_your_cart.as_view(),name="delete_your_cart"),
+    path("get_order_placed_specific_details/<int:pry_phone_number>/<int:product_number>/",get_order_placed_specific_details.as_view(),name="get_order_placed_specific_details")
 ]

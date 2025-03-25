@@ -113,6 +113,7 @@ class create_order_placed_details(APIView):
         purchase_quantity = request.data.get("purchase_quantity")
         purchase_total_price = request.data.get("purchase_total_price")
         purchase_pay_type = request.data.get("purchase_pay_type")
+        order_date=request.data.get("order_date")
 
         if not all([pry_phone_number,product_number]):
             return Response({"message":"give the input for phone number and product number"})
@@ -132,6 +133,7 @@ class create_order_placed_details(APIView):
             purchase_quantity = purchase_quantity,
             purchase_total_price = purchase_total_price,
             purchase_pay_type = purchase_pay_type,
+            order_date=order_date,
             cure_disases = product.cure_disases,
             product_image = product.product_image,
             about_product = product.about_product,
@@ -157,6 +159,14 @@ class get_order_placed_details(APIView):
         order_placed_patient = order_placed_details.objects.filter(pry_phone_number=pry_phone_number)
         serializer = order_placed_detailsSerializer(order_placed_patient,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
+    
+class get_order_placed_specific_details(APIView):
+
+    def get(self,request,pry_phone_number,product_number):
+        order_place_specific_product = get_object_or_404(order_placed_details,pry_phone_number=pry_phone_number,product_number=product_number)
+        serializer = order_placed_detailsSerializer(order_place_specific_product)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
     
 
 ###################################################################### create add to cart #########################################################
