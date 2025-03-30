@@ -151,7 +151,7 @@ class spec_user_booking(APIView):
 
 
     def get(self,request,phone_number):
-        user_booking = booking_doctor.objects.filter(phone_number=phone_number)
+        user_booking = booking_doctor.objects.filter(phone_number=phone_number).order_by('booking_date', 'booking_time')
 
 
         serializer = booking_doctorSerializer(user_booking,many=True)

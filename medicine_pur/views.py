@@ -156,17 +156,25 @@ class create_order_placed_details(APIView):
 class get_order_placed_details(APIView):
 
     def get(self,request,pry_phone_number):
-        order_placed_patient = order_placed_details.objects.filter(pry_phone_number=pry_phone_number)
+        order_placed_patient = order_placed_details.objects.filter(pry_phone_number=pry_phone_number).order_by('-id')
         serializer = order_placed_detailsSerializer(order_placed_patient,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
     
 class get_order_placed_specific_details(APIView):
 
-    def get(self,request,pry_phone_number,product_number):
-        order_place_specific_product = get_object_or_404(order_placed_details,pry_phone_number=pry_phone_number,product_number=product_number)
+    def get(self,request,pry_phone_number,id):
+        order_place_specific_product = get_object_or_404(order_placed_details,pry_phone_number=pry_phone_number,id=id)
         serializer = order_placed_detailsSerializer(order_place_specific_product)
         return Response(serializer.data,status=status.HTTP_200_OK)
+    
 
+class delete_order_product(APIView):
+     
+     def delete(self,request,pry_phone_number,id):
+         order_place_specific_product = get_object_or_404(order_placed_details,pry_phone_number=pry_phone_number,id=id)
+         order_place_specific_product.delete()
+         return Response({"message":"your order is Cancel"},status=status.HTTP_204_NO_CONTENT)
+         
     
 
 ###################################################################### create add to cart #########################################################
@@ -204,7 +212,7 @@ class get_add_to_cart(APIView):
     permission_classes=[AllowAny]
 
     def get(self,request,pry_phone_number):
-        cart = add_to_cart.objects.filter(pry_phone_number=pry_phone_number)
+        cart = add_to_cart.objects.filter(pry_phone_number=pry_phone_number).order_by('-id')
         serializer= add_to_cartSerializer(cart,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
 
