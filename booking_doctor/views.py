@@ -333,7 +333,7 @@ class get_fav_doc(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, phone_number):
-        fav_docs = favorite_doctor.objects.filter(phone_number=phone_number)
+        fav_docs = favorite_doctor.objects.filter(phone_number=phone_number).order_by("-id")
 
         if not fav_docs.exists():
             return Response({"message": "No favorite doctors found for this user."}, status=status.HTTP_404_NOT_FOUND)
@@ -343,18 +343,18 @@ class get_fav_doc(APIView):
 
 
 class delete_fav_doc(APIView):
-    def delete(self, request):
-        phone_number = request.data.get("phone_number")  # Get phone number from query params
-        doctor_id = request.data.get("doctor_id")  # Get doctor_id from query params
+    def delete(self, request,phone_number,id):
+        # phone_number = request.data.get("phone_number")  # Get phone number from query params
+        # doctor_id = request.data.get("doctor_id")  # Get doctor_id from query params
         
-        if not phone_number or not doctor_id:
-            return Response({"error": "Phone number and doctor ID are required"}, status=status.HTTP_400_BAD_REQUEST)
+        # if not phone_number or not doctor_id:
+        #     return Response({"error": "Phone number and doctor ID are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Find and delete the specific doctor for the given phone number
-        favorite = get_object_or_404(favorite_doctor, phone_number=phone_number, doctor_id=doctor_id)
+        favorite = get_object_or_404(favorite_doctor, phone_number=phone_number, id=id)
         favorite.delete()
 
-        return Response({"message": f"Doctor {doctor_id} removed from favorites for {phone_number}"}, status=status.HTTP_200_OK)
+        return Response({"message": f"Doctor {id} removed from favorites for {phone_number}"}, status=status.HTTP_204_NO_CONTENT)
     
 class search_doc_fav(ListView):
     model=favorite_doctor
