@@ -170,6 +170,14 @@ class spec_doctor_booked(APIView):
 
         return Response(serializer.data)
     
+class specific_booking_user_doc(APIView):
+    permission_classes=[AllowAny]
+
+    def get(self,request,id):
+        user_doc = get_object_or_404(booking_doctor,id=id)
+        serializer = booking_doctorSerializer(user_doc)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    
 class get_specific_user_doc_date_time(APIView):
     permission_classes=[AllowAny]
 
@@ -276,8 +284,9 @@ class get_doc_app_booking_history(ListView):
             )
             if query:
                 results=resultss.filter(
-                    Q(doctor_name__icontains=query)|
-                    Q(specialty__icontains=query)|
+                    Q(first_name__icontains=query)|
+                    Q(last_name__icontains=query)|
+                    Q(gender__icontains=query)|
                     Q(booking_date__icontains=query)
                 )
             else:
@@ -387,12 +396,8 @@ class create_chat_doc_only_user_chat(APIView):
 
         phone_number = request.data.get("phone_number")
         doctor_phone_number = request.data.get("doctor_phone_number")
-
         patients = get_object_or_404(user_profile,phone_number=phone_number)
-
-
         existing_chat_doc_user = chat_doc_only_user_chat.objects.filter(doctor_phone_number=doctor_phone_number, phone_number=phone_number).first()
-
         if existing_chat_doc_user:
             return Response({"message": "Doctor is already chat."}, status=status.HTTP_200_OK)
 

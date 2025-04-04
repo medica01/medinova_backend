@@ -15,6 +15,6 @@ urlpatterns=[
     path("search_chat_doc_only_user_chat/",search_chat_doc_only_user_chat.as_view(),name='search_chat_doc_only_user_chat'),
     path("search_doc_fav/",search_doc_fav.as_view(),name='search_doc_fav'),
     path("delete_specific_user_doctor/<str:phone_number>/<str:doc_phone_number>/<str:booking_date>/<str:booking_time>/",delete_specific_user_doctor.as_view(),name="delete_specific_user_doctor",),
-    path("get_specific_user_doc_date_time/<str:phone_number>/<str:doc_phone_number>/<str:booking_date>/<str:booking_time>/",get_specific_user_doc_date_time.as_view(),name="get_specific_user_doc_date_time",)
-
+    path("get_specific_user_doc_date_time/<str:phone_number>/<str:doc_phone_number>/<str:booking_date>/<str:booking_time>/",get_specific_user_doc_date_time.as_view(),name="get_specific_user_doc_date_time",),
+    path("specific_booking_user_doc/<int:id>/",specific_booking_user_doc.as_view(),name="specific_booking_user_doc",),
 ]
