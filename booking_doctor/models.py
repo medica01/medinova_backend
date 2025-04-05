@@ -22,9 +22,12 @@ class booking_doctor(models.Model):
     first_name = models.CharField(max_length=100,null=True,blank=True)
     last_name = models.CharField(max_length=100,null=True,blank=True)
     gender = models.CharField(max_length=10,null=True,blank=True)
+    doc_gender = models.CharField(max_length=50,null=True,blank=True)
     age = models.PositiveIntegerField(null=True,blank=True)
+    doc_age = models.IntegerField(null=True,blank=True)
     doc_phone_number=models.BigIntegerField(null=True) #store the doctor_phone number
     email=models.EmailField(null=True,blank=True)
+    doc_email=models.EmailField(null=True,blank=True)
     location=models.CharField(max_length=200,null=True,blank=True)
     user_photo = models.FileField(null=True,blank=True)
     # end
