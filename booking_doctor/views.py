@@ -366,7 +366,7 @@ class delete_fav_doc(APIView):
         favorite = get_object_or_404(favorite_doctor, phone_number=phone_number, id=id)
         favorite.delete()
 
-        return Response({"message": f"Doctor {id} removed from favorites for {phone_number}"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message":"doctor delete successfully"}, status=status.HTTP_204_NO_CONTENT)
     
 class search_doc_fav(ListView):
     model=favorite_doctor
@@ -392,6 +392,7 @@ class search_doc_fav(ListView):
 
 ############################################################################chat_doctor_get###################################################################
 
+# post of if user to chat doc
 class create_chat_doc_only_user_chat(APIView):
     permission_classes=[AllowAny]
 
@@ -457,6 +458,55 @@ class search_chat_doc_only_user_chat(ListView):
 
 
             return JsonResponse({'result':list(results.values())})
+
+
+# only show booked doc chat
+
+class create_booked_doc_chat(APIView):
+    permission_classes=[AllowAny]
+
+    def post(self,request):
+
+        patient_phone_number = request.data.get("patient_phone_number")
+        doctor_phone_no=request.data.get("doctor_phone_no")
+        doctor = get_object_or_404(doctor_details,doctor_phone_no=doctor_phone_no)
+        existing_usr_doc = show_booked_doc_chat.objects.filter(patient_phone_number=patient_phone_number,doctor_phone_no=doctor_phone_no).first()
+        if existing_usr_doc:
+            return Response({"message":"doctor user is already exist"},status=status.HTTP_200_OK)
+        
+
+        create_user_doc = show_booked_doc_chat.objects.create(
+            doctor = doctor,
+            doctor_name = doctor.doctor_name,
+            patient_phone_number = patient_phone_number,
+            doctor_phone_no = doctor_phone_no,
+            doctor_email=doctor.doctor_email,
+            specialty=doctor.specialty,
+            service=doctor.service,
+            age = doctor.age,
+            gender = doctor.gender,
+            language=doctor.language,
+            doctor_image=doctor.doctor_image,
+            qualification=doctor.qualification,
+            bio=doctor.bio,
+            reg_no=doctor.reg_no,
+            doctor_location=doctor.doctor_location
+        )
+
+        serializer = show_booked_doc_chatSerializers(create_user_doc)
+        return Response(serializer.data,status=status.HTTP_201_CREATED)
+
+class get_show_booked_doc_chat(APIView):
+    permission_classes =[AllowAny]
+
+    def get(self,request,patient_phone_number):
+        patient_phone_number=show_booked_doc_chat.objects.filter(patient_phone_number=patient_phone_number)
+
+        if not patient_phone_number.exists():
+            return Response({"message": "No user chat found for this booked doctors."}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = show_booked_doc_chatSerializers(patient_phone_number,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
 
 

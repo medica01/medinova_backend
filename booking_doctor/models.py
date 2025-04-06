@@ -80,3 +80,24 @@ class chat_doc_only_user_chat(models.Model):
 
     class Meta:
         unique_together=("phone_number","doctor_phone_number")
+
+
+class show_booked_doc_chat(models.Model):
+    doctor = models.ForeignKey(doctor_details,on_delete=models.CASCADE,null=True,blank=True)
+    doctor_name = models.CharField(max_length=100,null=True,blank=True)
+    patient_phone_number = models.BigIntegerField()
+    doctor_phone_no = models.BigIntegerField(null=True,blank=True)
+    doctor_email=models.EmailField(null=True,blank=True)
+    specialty=models.CharField(max_length=100,null=True,blank=True)
+    service=models.IntegerField(null=True,blank=True)
+    age = models.IntegerField(null=True,blank=True)
+    gender = models.CharField(max_length=50,null=True,blank=True)
+    language=models.CharField(max_length=100,null=True,blank=True)
+    doctor_image=models.FileField(max_length=100,null=True,blank=True)
+    qualification=models.CharField(max_length=100,null=True,blank=True)
+    bio=models.TextField(null=True,blank=True)
+    reg_no=models.BigIntegerField(null=True,blank=True)
+    doctor_location=models.TextField(null=True,blank=True)
+
+    class Meta:
+        unique_together=("patient_phone_number","doctor_phone_no")

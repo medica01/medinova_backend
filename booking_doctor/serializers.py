@@ -27,3 +27,8 @@ class chat_doc_only_user_chatSerializer(serializers.ModelSerializer):
     class Meta:
         model = chat_doc_only_user_chat
         fields="__all__"
+
+class show_booked_doc_chatSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = show_booked_doc_chat
+        fields="__all__"
