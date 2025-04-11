@@ -111,7 +111,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'healthhub',
         'USER':'root',
-        'PASSWORD':'gokul',
+        'PASSWORD':'',
         'HOST':'localhost',
         'PORT':'3306',
     }
