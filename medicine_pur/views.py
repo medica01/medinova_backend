@@ -109,6 +109,7 @@ class create_order_placed_details(APIView):
     def post(self,request):
 
         pry_phone_number = request.data.get("pry_phone_number")
+        address_id = request.data.get("address_id")
         product_number = request.data.get("product_number")
         purchase_quantity = request.data.get("purchase_quantity")
         purchase_total_price = request.data.get("purchase_total_price")
@@ -120,7 +121,7 @@ class create_order_placed_details(APIView):
         
 
         product =  get_object_or_404(medicine_details,product_number=product_number)
-        patient = get_object_or_404(pati_address,pry_phone_number=pry_phone_number)
+        patient = get_object_or_404(pati_address,pry_phone_number=pry_phone_number,sequence_number=address_id)
 
 
         order_placed = order_placed_details.objects.create(

@@ -7,7 +7,7 @@ class medicine_details(models.Model):
     quantity = models.BigIntegerField(null=True,blank=True)
     price = models.BigIntegerField(null=True,blank=True)
     cure_disases = models.CharField(max_length=100,null=True,blank=True)
-    product_image = models.FileField(null=True,blank=True)
+    product_image = models.ImageField(upload_to='medicine_images/', null=True, blank=True)
     about_product = models.TextField(null=True,blank=True)
     product_type = models.CharField(max_length=100,null=True,blank=True)
 
