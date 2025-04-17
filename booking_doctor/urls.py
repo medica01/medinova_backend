@@ -19,4 +19,5 @@ urlpatterns=[
     path("delete_specific_user_doctor/<str:phone_number>/<str:doc_phone_number>/<str:booking_date>/<str:booking_time>/",delete_specific_user_doctor.as_view(),name="delete_specific_user_doctor",),
     path("get_specific_user_doc_date_time/<str:phone_number>/<str:doc_phone_number>/<str:booking_date>/<str:booking_time>/",get_specific_user_doc_date_time.as_view(),name="get_specific_user_doc_date_time",),
     path("specific_booking_user_doc/<int:id>/",specific_booking_user_doc.as_view(),name="specific_booking_user_doc",),
+    path("delete_booked_doc_chat/<int:patient_phone_number>/<int:doctor_phone_no>/",delete_booked_doc_chat.as_view(),name="delete_booked_doc_chat"),
 ]

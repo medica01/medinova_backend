@@ -459,6 +459,15 @@ class get_show_booked_doc_chat(APIView):
         
         serializer = show_booked_doc_chatSerializers(patient_phone_number,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
+    
+class delete_booked_doc_chat(APIView):
+    permission_classes = [AllowAny]
+
+    def delete(self, request, patient_phone_number, doctor_phone_no):
+        delete_doc = get_object_or_404(show_booked_doc_chat, patient_phone_number=patient_phone_number, doctor_phone_no=doctor_phone_no)
+        delete_doc.delete()
+        return Response({"message":"doctor user delete successfully"},status=status.HTTP_204_NO_CONTENT)
+    
 
 
 
