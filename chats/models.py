@@ -13,7 +13,8 @@ class ChatMessage(models.Model):
     user_phone_no = models.BigIntegerField()  # User's phone number
     doc_phone_no = models.BigIntegerField()  # Doctor's phone number
     sender_type = models.CharField(max_length=10, choices=SENDER_CHOICES)  # Indicates who sent the message
-    message = models.TextField()  # Chat message
+    message = models.TextField(null=True,blank=True)  # Chat message
+    image = models.ImageField(upload_to='medicine_images/', null=True, blank=True)
     datestamp = models.DateField(auto_now_add=True)  # Date of the message
     timestamp = models.TimeField(auto_now_add=True)  # Time of the message
 

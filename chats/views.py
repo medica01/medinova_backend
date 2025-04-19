@@ -32,16 +32,15 @@ class SendMessageView(APIView):
         sender_phone = request.data.get("sender_phone")
         receiver_phone = request.data.get("receiver_phone")
         message = request.data.get("message")
+        image = request.data.get("image")
         sender_type = request.data.get("sender_type")  # "user" or "doctor"
-
-        if not all([sender_phone, receiver_phone, message, sender_type]):
-            return Response({"error": "All fields are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Save the message in the database
         chats_message = ChatMessage.objects.create(
             user_phone_no=sender_phone if sender_type == "user" else receiver_phone,
             doc_phone_no=receiver_phone if sender_type == "user" else sender_phone,
             sender_type=sender_type,
+            image=image,
             message=message
         )
         serializer = ChatMessageSerializer(chats_message)
