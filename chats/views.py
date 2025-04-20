@@ -71,6 +71,14 @@ class DoctorChatHistoryView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
+class delete_chat_user_doc(APIView):
+
+    def delete(self,request,id):
+        delete_chat=get_object_or_404(ChatMessage,id=id)
+        delete_chat.delete()
+        return Response({"message":"chat delete"},status=status.HTTP_200_OK)
+    
+
 #####################################################################search_chat#############################################
 
 
@@ -92,6 +100,7 @@ class search_chat(ListView):
             return JsonResponse({'error': 'User and Doctor phone numbers are required'}, status=400)
 
         return JsonResponse({'result': list(results.values())})
+    
     
 
 

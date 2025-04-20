@@ -301,10 +301,18 @@ class get_fav_doc(APIView):
 
         serializer = favorite_doctorSerializer(fav_docs, many=True)  # Use many=True
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class get_specific_fav_doc(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self,request,phone_number,doctor_id):
+        faviii= get_object_or_404(favorite_doctor,phone_number=phone_number,doctor_id=doctor_id)
+        serializer = favorite_doctorSerializer(faviii)
+        return Response(serializer.data,status=status.HTTP_200_OK)
 
 
 class delete_fav_doc(APIView):
-    def delete(self, request,phone_number,id):
+    def delete(self, request,phone_number,doctor_id):
         # phone_number = request.data.get("phone_number")  # Get phone number from query params
         # doctor_id = request.data.get("doctor_id")  # Get doctor_id from query params
         
@@ -312,7 +320,7 @@ class delete_fav_doc(APIView):
         #     return Response({"error": "Phone number and doctor ID are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Find and delete the specific doctor for the given phone number
-        favorite = get_object_or_404(favorite_doctor, phone_number=phone_number, id=id)
+        favorite = get_object_or_404(favorite_doctor, phone_number=phone_number, doctor_id=doctor_id)
         favorite.delete()
 
         return Response({"message":"doctor delete successfully"}, status=status.HTTP_204_NO_CONTENT)
